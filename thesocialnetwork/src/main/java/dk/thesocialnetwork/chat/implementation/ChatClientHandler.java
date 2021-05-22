@@ -33,7 +33,6 @@ public class ChatClientHandler {
 
     public ChatClient createClient(String user, String target) {
             ChatClient client = new ChatClient(user,target,jedisPool);
-            client.connect();
             return client;
     }
 
