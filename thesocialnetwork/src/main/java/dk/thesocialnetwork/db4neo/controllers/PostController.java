@@ -54,7 +54,7 @@ public class PostController {
     }
 
     @PostMapping(path = "/like", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<LikedPosntDTO> likePost(@RequestBody LikedPostDTO likedPostDTO) {
+    public ResponseEntity<LikedPostDTO> likePost(@RequestBody LikedPostDTO likedPostDTO) {
         try (Session session = driver.session()) {
             session.run("MATCH (n:Person {handleName: '" + likedPostDTO.getLikedPerson() + "'})-[r:LIKED]->(p:Post) " +
                     "WHERE ID(p) = " + likedPostDTO.getPostId() + " " +

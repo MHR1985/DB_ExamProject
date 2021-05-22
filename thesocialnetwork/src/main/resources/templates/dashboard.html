@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script
+            src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+            crossorigin="anonymous">
+
+    </script>
+</head>
+<body>
+<div>This is the dashboard</div>
+<div>
+    <iframe id="notifications" th:src="'/chat/notifications?name=' + ${name}" title="chat"></iframe>
+</div>
+
+
+</body>
+
+<script>
+    $(document).ready(function(){
+     refreshIframe();
+    });
+
+    function refreshIframe(){
+        setTimeout(function(){
+            document.getElementById('notifications').contentWindow.location.reload();
+            refreshIframe()
+        }, 10000);
+    }
+
+
+</script>
+
+<script type="text/javascript">
+
+</script>
+</html>

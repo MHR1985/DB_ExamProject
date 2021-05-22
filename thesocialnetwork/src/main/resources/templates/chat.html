@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script
+            src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+            crossorigin="anonymous">
+
+    </script>
+</head>
+<body>
+<form id="chatForm" action="/chat/send">
+
+    <input id="messageInput" onkeyup='saveValue(this);' name="message" type="text" placeholder="say something">
+    <input id="nameInput" type="hidden" name="name" th:value="${name}">
+    <input type="hidden" name="target" th:value="${target}">
+    <Button onclick="submitChatForm();" value="Send!" type="submit">Send</Button>
+
+</form>
+<div th:each="line : ${history}">
+    <p th:text="${line}">
+    </p>
+</div>
+<script>
+    function submitChatForm() {
+        clearSavedValue();
+        $("#chatForm").submit();
+    }
+
+    let name = document.getElementById("nameInput").value;
+    document.getElementById("messageInput").value = getSavedValue("messageInput@" + name);    // set the value to this input
+    /* Here you can add more inputs to set value. if it's saved */
+
+    //Save the value function - save it to localStorage as (ID, VALUE)
+    function saveValue(e) {
+        let id = e.id;  // get the sender's id to save it.
+        let key = id + "@" + name
+        let val = e.value; // get the value.
+        localStorage.setItem(key, val);// Every time user writing something, the localStorage's value will override .
+    }
+
+    //get the saved value function - return the value of "v" from localStorage.
+    function getSavedValue(v) {
+        if (!localStorage.getItem(v)) {
+            return "";// You can change this to your defualt value.
+        }
+        return localStorage.getItem(v);
+    }
+
+    function clearSavedValue() {
+        let id = "messageInput";  // get the sender's id to save it.
+        let key = id + "@" + name
+        let val = ""; // get the value.
+        localStorage.setItem(key, val);
+    }
+</script>
+</body>
+</html>
