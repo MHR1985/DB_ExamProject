@@ -10,7 +10,7 @@ x-shared:
   NEO4J_dbms_memory_pagecache_size: 1G
   NEO4J_dbms.memory.heap.initial_size: 2G
   NEO4J_dbms_memory_heap_max__size: 4G
-  NEO4J_causal__clustering_minimum__core__cluster__size__at__runtime: 3
+  NEO4J_causal__clustering_minimum__core__cluster__size__at__runtime: 2
   NEO4JLABS_PLUGINS: '["graph-data-science"]'
   NEO4J_dbms_security_procedures_unrestricted: gds.*
   NEO4J_dbms_security_procedures_allowlist: gds.*
@@ -19,7 +19,7 @@ x-shared-core:
   &common-core
   <<: *common
   NEO4J_dbms_mode: CORE
-  NEO4J_causal__clustering_minimum__core__cluster__size__at__formation: 3
+  NEO4J_causal__clustering_minimum__core__cluster__size__at__formation: 2
 
 networks:
   lan:
@@ -60,26 +60,6 @@ services:
       NEO4J_dbms_connector_https_listen__address: :6478
       NEO4J_dbms_connector_bolt_listen__address: :7688
 
-
-  core3:
-    hostname: core3
-    image: neo4j:4.2.5-enterprise
-    networks:
-      - lan
-    ports:
-      - 7476:7476
-      - 6479:6479
-      - 7689:7689
-    container_name: core3
-    environment:
-      <<: *common-core
-      NEO4J_causal__clustering_discovery__advertised__address: core3:5000
-      NEO4J_causal__clustering_transaction__advertised__address: core3:6000
-      NEO4J_causal__clustering_raft__advertised__address: core3:7000
-      NEO4J_dbms_connector_http_listen__address: :7476
-      NEO4J_dbms_connector_https_listen__address: :6479
-      NEO4J_dbms_connector_bolt_listen__address: :7689
-
   readreplica1:
     image: neo4j:4.2.5-enterprise
     networks:
@@ -98,25 +78,6 @@ services:
       NEO4J_dbms_connector_https_listen__address: :6480
       NEO4J_dbms_connector_bolt_listen__address: :7690
 
-
-  readreplica2:
-    image: neo4j:4.2.5-enterprise
-    networks:
-      - lan
-    ports:
-      - 7478:7478
-      - 6481:6481
-      - 7691:7691
-    environment:
-      <<: *common
-      NEO4J_dbms_mode: READ_REPLICA
-      NEO4J_causal__clustering_discovery__advertised__address: readreplica2:5000
-      NEO4J_causal__clustering_transaction__advertised__address: readreplica2:6000
-      NEO4J_causal__clustering_raft__advertised__address: readreplica2:7000
-      NEO4J_dbms_connector_http_listen__address: :7478
-      NEO4J_dbms_connector_https_listen__address: :6481
-      NEO4J_dbms_connector_bolt_listen__address: :7691
-
   redis:
     image: redis:alpine
     command: redis-server --requirepass 1234
@@ -126,4 +87,16 @@ services:
       - lan
     ports:
       - 6379:6379
+
+  postgres:
+    image: postgres:alpine
+    environment:
+      POSTGRES_DB: logindb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+      #- ./sql/create_database.sql:/docker-entrypoint-initdb.d/create_database.sql
 
