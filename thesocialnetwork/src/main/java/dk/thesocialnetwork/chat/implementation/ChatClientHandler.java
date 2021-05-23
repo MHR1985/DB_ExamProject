@@ -6,6 +6,7 @@ import redis.clients.jedis.JedisPoolConfig;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Set;
 
 public class ChatClientHandler {
 
@@ -36,10 +37,12 @@ public class ChatClientHandler {
             return client;
     }
 
-    public List<String> getNotifications(String user){
+    public Set<String> getNotifications(String user){
         try (Jedis jedis = jedisPool.getResource()) {
             String key = "notification:" + user;
-            return jedis.lrange(key,0,999);
+//            jedis.del(key);
+            return jedis.smembers(key);
+//            return jedis.lrange(key,0,999);
         }
     }
 

@@ -92,8 +92,10 @@ public class ChatClient {
     private void notifyTarget(){
         try (Jedis jedis = jedisPool.getResource()) {
             String key = "notification:" + target;
-            jedis.lpush(key,username);
-            jedis.ltrim(key,0,999);
+//            jedis.lpush(key,username);
+//            jedis.ltrim(key,0,999);
+            jedis.sadd(key,username);
+            System.out.println("Sent notification to " + key + " with value " + username);
 
         }
     }
