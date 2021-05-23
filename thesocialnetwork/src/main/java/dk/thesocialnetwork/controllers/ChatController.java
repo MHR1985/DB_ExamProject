@@ -13,31 +13,25 @@ import java.util.*;
 @Controller
 public class ChatController {
     @GetMapping("/chat/send")
-    public RedirectView send(@RequestParam(name = "name", required = false, defaultValue = "TheDude") String name, @RequestParam(name = "target", required = false, defaultValue = "Duderino") String target,@RequestParam(name = "message", required = false, defaultValue = "Hello World") String message, Model model) {
+    public RedirectView send(@RequestParam(name = "name", required = true, defaultValue = "Martin") String name, @RequestParam(name = "target", required = true, defaultValue = "Muggi") String target,@RequestParam(name = "message", required = false, defaultValue = "Hello World") String message) {
         ChatClientHandler handler = new ChatClientHandler();
         ChatClient client = handler.createClient(name,target);
         client.sendMessage(message);
-
-        model.addAttribute("name", name);
-        model.addAttribute("target", target);
-        model.addAttribute("message", message);
-
         return new RedirectView("/chat?name="+name+"&target=" + target);
     }
 
     @GetMapping("/chat/notifications")
-    public String notifications(@RequestParam(name = "name", required = false, defaultValue = "World") String name, Model model) {
+    public String notifications(@RequestParam(name = "name", required = true, defaultValue = "martin") String name, Model model) {
         ChatClientHandler handler = new ChatClientHandler();
         List<String> notifications = handler.getNotifications(name);
         notifications = removeDuplicates(notifications);
         model.addAttribute("name",name);
         model.addAttribute("notifications", notifications);
-
         return "notifications";
     }
 
     @GetMapping("/chat")
-    public String chat(@RequestParam(name = "name", required = false, defaultValue = "TheDude") String name, @RequestParam(name = "target", required = false, defaultValue = "Duderino") String target, Model model) {
+    public String chat(@RequestParam(name = "name", required = true, defaultValue = "martin") String name, @RequestParam(name = "target", required = true, defaultValue = "muggi") String target, Model model) {
         ChatClientHandler handler = new ChatClientHandler();
         ChatClient client = handler.createClient(name,target);
         List<String> history = client.getJedisChatHistory();

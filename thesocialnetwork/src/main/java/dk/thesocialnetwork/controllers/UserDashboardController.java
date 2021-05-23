@@ -12,7 +12,7 @@ import java.util.List;
 @Controller
 public class UserDashboardController {
     @GetMapping("/dashboard")
-    public String dashboard(@RequestParam(name = "name", required = false, defaultValue = "TheDude") String name, Model model) {
+    public String dashboard(@RequestParam(name = "name", required = true, defaultValue = "Martin") String name, Model model) {
 
 
         model.addAttribute("name", name);
