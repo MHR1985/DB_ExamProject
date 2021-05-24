@@ -28,17 +28,25 @@ public class PersonController {
         this.driver = driver;
     }
 
-    @GetMapping
+    @GetMapping("")
     public Iterable<Person> findAllPersons() {
         return personRepository.findAll();
     }
+
+
 
     @GetMapping("/{name}")
     public Person getPersonByName(@PathVariable String name) {
         return personRepository.getPersonByHandleName(name);
     }
 
-    @PostMapping(path = "/follows", consumes = "application/json", produces = "application/json")
+    public Iterable<Person> findAllToFollow() {
+
+        return personRepository.findAll();
+    }
+
+
+    @PostMapping(path = "/follow", consumes = "application/json", produces = "application/json")
     public ResponseEntity<FollowsDTO> createRelationShipPerson(@RequestBody FollowsDTO followsDTO) {
         if (followsDTO.follower.equals(followsDTO.target))
             return new ResponseEntity<>(followsDTO, HttpStatus.BAD_REQUEST);
@@ -54,6 +62,24 @@ public class PersonController {
             return new ResponseEntity<>(followsDTO, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    /*
+    @PostMapping(path = "/unfollow", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<FollowsDTO> deleteRelationShipPerson(@RequestBody FollowsDTO followsDTO) {
+        if (followsDTO.follower.equals(followsDTO.target))
+            return new ResponseEntity<>(followsDTO, HttpStatus.BAD_REQUEST);
+        try (Session session = driver.session()) {
+            session.run("MATCH (n:Person {handleName: '" + followsDTO.follower + "'}) " +
+                    "MATCH (m:Person {handleName: '" + followsDTO.target + "'}) " +
+                    "DROP (n)-[: FOLLOWS]->(m) if exists " +
+                    "DROP (n)<-[: FOLLOWED_BY]-(m) if exists " +
+                    "CREATE (n)-[: FOLLOWS]->(m)" +
+                    "CREATE (n)<-[: FOLLOWED_BY]-(m)");
+            return new ResponseEntity(followsDTO, HttpStatus.OK);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(followsDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }*/
 
 
     @PostMapping("/create")
