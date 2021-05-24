@@ -56,8 +56,6 @@ public class PersonController {
     }
 
 
-
-
     @PostMapping("/create")
     public void createPeople() {
         try (Session session = driver.session()) {
@@ -119,5 +117,12 @@ public class PersonController {
         }
     }
 
+    public void createPerson(String username) {
+        try (Session session = driver.session()) {
+            session.run("CREATE (:Person {handleName: "+username+"})");
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
 
 }

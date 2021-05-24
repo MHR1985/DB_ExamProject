@@ -4,6 +4,7 @@ import org.neo4j.ogm.annotation.NodeEntity;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Relationship;
 
+import java.util.ArrayList;
 import java.util.List;
 import static org.springframework.data.neo4j.core.schema.Relationship.Direction.INCOMING;
 
@@ -24,6 +25,13 @@ public class Person {
     private List<Post> posts;
 
     public Person() {
+    }
+
+    public Person(String handleName) {
+        this.handleName = handleName;
+        this.followers = new ArrayList<>();
+        this.follows = new ArrayList<>();
+        this.posts = new ArrayList<>();
     }
 
     public String getHandleName() {
