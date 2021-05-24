@@ -1,7 +1,7 @@
 package dk.thesocialnetwork.controllers;
 
-import dk.thesocialnetwork.chat.implementation.ChatClient;
-import dk.thesocialnetwork.chat.implementation.ChatClientHandler;
+import dk.thesocialnetwork.logic.ChatClient;
+import dk.thesocialnetwork.logic.ChatClientHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;

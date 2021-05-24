@@ -1,8 +1,8 @@
-package dk.thesocialnetwork.db4neo.controllers;
+package dk.thesocialnetwork.controllers;
 
-import dk.thesocialnetwork.db4neo.dto.FollowsDTO;
-import dk.thesocialnetwork.db4neo.model.Person;
-import dk.thesocialnetwork.db4neo.repository.PersonRepository;
+import dk.thesocialnetwork.dto.FollowsDTO;
+import dk.thesocialnetwork.model.Person;
+import dk.thesocialnetwork.repository.PersonRepository;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Record;
 import org.neo4j.driver.Result;

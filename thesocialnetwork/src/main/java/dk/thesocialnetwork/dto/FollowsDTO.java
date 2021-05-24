@@ -1,4 +1,4 @@
-package dk.thesocialnetwork.db4neo.dto;
+package dk.thesocialnetwork.dto;
 
 public class FollowsDTO {
 

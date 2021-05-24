@@ -1,11 +1,10 @@
-package dk.thesocialnetwork.chat.implementation;
+package dk.thesocialnetwork.logic;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
 import java.time.Duration;
-import java.util.List;
 import java.util.Set;
 
 public class ChatClientHandler {

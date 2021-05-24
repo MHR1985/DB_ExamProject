@@ -1,6 +1,6 @@
-package dk.thesocialnetwork.db4neo.repository;
+package dk.thesocialnetwork.repository;
 
-import dk.thesocialnetwork.db4neo.model.Post;
+import dk.thesocialnetwork.model.Post;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.data.repository.query.Param;

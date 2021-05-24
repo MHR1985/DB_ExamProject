@@ -1,8 +1,8 @@
-package dk.thesocialnetwork.db4neo.controllers;
+package dk.thesocialnetwork.controllers;
 
-import dk.thesocialnetwork.db4neo.dto.CreatePostDTO;
-import dk.thesocialnetwork.db4neo.dto.LikedPostDTO;
-import dk.thesocialnetwork.db4neo.repository.PostRepository;
+import dk.thesocialnetwork.dto.CreatePostDTO;
+import dk.thesocialnetwork.dto.LikedPostDTO;
+import dk.thesocialnetwork.repository.PostRepository;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Record;
 import org.neo4j.driver.Result;

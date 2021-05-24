@@ -1,4 +1,4 @@
-package dk.thesocialnetwork.chat.implementation;
+package dk.thesocialnetwork.logic;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -47,7 +47,6 @@ public class ChatClient {
                             ready=true;
                         }
                     }, channelName);
-
 
                 }
             }

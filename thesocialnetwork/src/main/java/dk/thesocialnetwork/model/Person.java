@@ -1,4 +1,4 @@
-package dk.thesocialnetwork.db4neo.model;
+package dk.thesocialnetwork.model;
 
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.springframework.data.neo4j.core.schema.Id;

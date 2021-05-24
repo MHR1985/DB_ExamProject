@@ -1,4 +1,4 @@
-package dk.thesocialnetwork.db4neo.model;
+package dk.thesocialnetwork.model;
 
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
@@ -8,7 +8,6 @@ import org.springframework.data.neo4j.core.schema.Relationship;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.springframework.data.neo4j.core.schema.Relationship.Direction.INCOMING;
 @Node
 public class Post {
 
