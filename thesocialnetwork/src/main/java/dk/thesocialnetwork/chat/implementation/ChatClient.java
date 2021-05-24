@@ -68,7 +68,7 @@ public class ChatClient {
             String channelName = getChannelName();
             System.out.println("Publishing to " + channelName);
             String editedMessage = username + ": " + message;
-            jedis.publish(channelName, editedMessage);
+            //jedis.publish(channelName, editedMessage);
             addMessageToRedisHistory(editedMessage);
             notifyTarget();
         }

@@ -28,7 +28,7 @@ public class LoginController {
     @PostMapping("/createuser")
     public ResponseEntity<AjaxDTO> createUser(@ModelAttribute User user) {
         AjaxDTO ajaxDTO = new AjaxDTO();
-        if (userRepository.findByUsername(user.getUsername()) == null) {
+        if (userRepository.findUserWithUsername(user.getUsername()) == null) {
             try {
                 User userToCreate = new User(user.getUsername(), encoder.encode(user.getPassword()));
                 userRepository.save(userToCreate);
