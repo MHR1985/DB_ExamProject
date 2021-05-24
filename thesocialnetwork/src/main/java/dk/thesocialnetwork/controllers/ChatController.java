@@ -4,15 +4,19 @@ import dk.thesocialnetwork.chat.implementation.ChatClient;
 import dk.thesocialnetwork.chat.implementation.ChatClientHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.*;
 
 @Controller
+@RequestMapping("/chat")
+@CrossOrigin
 public class ChatController {
-    @GetMapping("/chat/send")
+    @GetMapping("/send")
     public RedirectView send(@RequestParam(name = "name", required = true, defaultValue = "Martin") String name, @RequestParam(name = "target", required = true, defaultValue = "Muggi") String target, @RequestParam(name = "message", required = false, defaultValue = "Hello World") String message) {
         ChatClientHandler handler = new ChatClientHandler();
         ChatClient client = handler.createClient(name, target);
@@ -20,7 +24,7 @@ public class ChatController {
         return new RedirectView("/chat?name=" + name + "&target=" + target);
     }
 
-    @GetMapping("/chat/notifications")
+    @GetMapping("/notifications")
     public String notifications(@RequestParam(name = "name", required = true, defaultValue = "martin") String name, Model model) {
         ChatClientHandler handler = new ChatClientHandler();
         List<String> notifications = new ArrayList<>();
@@ -31,7 +35,7 @@ public class ChatController {
         return "notifications";
     }
 
-    @GetMapping("/chat")
+    @GetMapping("")
     public String chat(@RequestParam(name = "name", required = true, defaultValue = "martin") String name, @RequestParam(name = "target", required = true, defaultValue = "muggi") String target, Model model) {
         ChatClientHandler handler = new ChatClientHandler();
         ChatClient client = handler.createClient(name, target);
