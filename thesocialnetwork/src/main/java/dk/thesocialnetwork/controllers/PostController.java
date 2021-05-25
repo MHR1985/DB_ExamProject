@@ -3,6 +3,7 @@ package dk.thesocialnetwork.controllers;
 import com.google.gson.Gson;
 import dk.thesocialnetwork.dto.CreatePostDTO;
 import dk.thesocialnetwork.dto.LikedPostDTO;
+import dk.thesocialnetwork.dto.PostDTO;
 import dk.thesocialnetwork.repository.PostRepository;
 import dk.thesocialnetwork.util.HelperUtil;
 import org.neo4j.driver.Driver;
@@ -43,7 +44,9 @@ public class PostController {
 
     @GetMapping("")
     public String getNewsFeed(Model model) {
-
+        String author = HelperUtil.getUsernameFromLoggedIn();
+        List<PostDTO> postDTOS = postRepository.getPostsFromFollowes(author);
+        model.addAttribute("posts", postDTOS);
         return "newsfeed";
     }
 

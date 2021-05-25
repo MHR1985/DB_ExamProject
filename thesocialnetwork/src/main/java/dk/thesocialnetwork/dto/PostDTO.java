@@ -11,32 +11,29 @@ import java.util.List;
 public class PostDTO {
 
 
-    private Long id;
+    private String id;
 
     private String text;
 
-    private List<Person> likes;
+    private List<String> taggedPeople;
 
-    private List<Person> taggedPeople;
-
-    private LocalDateTime timeStamp;
+    private String timeStamp;
 
     private String author;
 
-    public PostDTO(Long id, String text, List<Person> likes, List<Person> taggedPeople, LocalDateTime timeStamp, String author) {
+    public PostDTO(String id, String text, List<String> taggedPeople, String timeStamp, String author) {
         this.id = id;
         this.text = text;
-        this.likes = likes;
         this.taggedPeople = taggedPeople;
         this.timeStamp = timeStamp;
         this.author = author;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -48,27 +45,20 @@ public class PostDTO {
         this.text = text;
     }
 
-    public List<Person> getLikes() {
-        return likes;
-    }
 
-    public void setLikes(List<Person> likes) {
-        this.likes = likes;
-    }
-
-    public List<Person> getTaggedPeople() {
+    public List<String> getTaggedPeople() {
         return taggedPeople;
     }
 
-    public void setTaggedPeople(List<Person> taggedPeople) {
+    public void setTaggedPeople(List<String> taggedPeople) {
         this.taggedPeople = taggedPeople;
     }
 
-    public LocalDateTime getTimeStamp() {
+    public String getTimeStamp() {
         return timeStamp;
     }
 
-    public void setTimeStamp(LocalDateTime timeStamp) {
+    public void setTimeStamp(String timeStamp) {
         this.timeStamp = timeStamp;
     }
 

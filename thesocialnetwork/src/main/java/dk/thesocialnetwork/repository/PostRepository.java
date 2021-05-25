@@ -3,10 +3,7 @@ package dk.thesocialnetwork.repository;
 import dk.thesocialnetwork.dto.PostDTO;
 import dk.thesocialnetwork.model.Person;
 import dk.thesocialnetwork.model.Post;
-import org.neo4j.driver.Driver;
-import org.neo4j.driver.Record;
-import org.neo4j.driver.Result;
-import org.neo4j.driver.Session;
+import org.neo4j.driver.*;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.data.repository.query.Param;
@@ -78,32 +75,35 @@ public class PostRepository {
         }
     }
 
-    /*public List<PostDTO> getPostsFromFollowes(String username) {
+    public List<PostDTO> getPostsFromFollowes(String username) {
         List<Record> recordStream;
-        List<String> follows = new ArrayList<>();
+        List<PostDTO> follows = new ArrayList<>();
         try (Session session = driver.session()) {
-            Result result = session.run("MATCH (n:Person {handleName: '"+username+"'}) " +
+            Result result = session.run("MATCH (n:Person {handleName: 'kenneth'}) " +
                     "MATCH (n)-[r:FOLLOWS]->(m) " +
                     "MATCH (m)-[:CREATED_POST]->(p) " +
-                    "return p, m, id(p) AS post_id" +
+                    "OPTIONAL MATCH (v)-[t:TAGGED_IN]->(p) " +
+                    "return p, m, id(p) AS post_id, collect(v) as v " +
                     "ORDER BY p.timeStamp DESC");
             recordStream = result.stream().collect(Collectors.toList());
             for (Record rec : recordStream) {
                 String id = rec.get("post_id").toString();
-                id = id.substring(1, id.length() - 1);
-
+                List<String> tags = new ArrayList<>();
+                for(Value val: rec.get("v").values()){
+                    String taggedPerson = val.get("handleName").toString();
+                    taggedPerson = taggedPerson.substring(1, taggedPerson.length() - 1);
+                    tags.add(taggedPerson);
+                }
+                String text = rec.get("p").get("text").toString();
+                text = text.substring(1, text.length() - 1);
                 String timestamp = rec.get("p").get("timeStamp").toString();
                 timestamp = timestamp.substring(1, timestamp.length() - 1);
-
                 String author = rec.get("m").get("handleName").toString();
                 author  = author.substring(1, author.length() - 1);
-
-                PostDTO postDto = new PostDTO(id,);
-
-                String handleName = rec.get("p").get("handleName").toString();
-
+                PostDTO postDto = new PostDTO(id,text,tags,timestamp,author);
+                follows.add(postDto);
             }
+            return follows;
         }
-        return null;
-    }*/
+    }
 }
