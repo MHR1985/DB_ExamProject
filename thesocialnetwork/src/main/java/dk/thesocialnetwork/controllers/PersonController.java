@@ -29,26 +29,10 @@ public class PersonController {
 
     private final Driver driver;
 
-
-    public PersonController(PersonRepository personRepository, Driver driver) {
-        this.personRepository = personRepository;
+    public PersonController(Driver driver) {
         this.driver = driver;
+        personRepository = new PersonRepository(driver);
     }
-
-    /*@GetMapping("")
-    public Iterable<Person> findAllPersons() {
-        return personRepository.findAll();
-    }
-
-    @GetMapping("/{name}")
-    public Person getPersonByName(@PathVariable String name) {
-        return personRepository.getPersonByHandleName(name);
-    }
-
-    public Iterable<Person> findAllToFollow() {
-
-        return personRepository.findAll();
-    }*/
 
     @Transactional
     @PostMapping(path = "/follow", consumes = "application/json", produces = "application/json")
@@ -56,32 +40,12 @@ public class PersonController {
         if (followsDTO.follower.equals(followsDTO.target))
             return new ResponseEntity<>(followsDTO, HttpStatus.BAD_REQUEST);
         try {
-            deleteFollower(followsDTO);
-            createFollower(followsDTO);
+            personRepository.deleteFollower(followsDTO);
+            personRepository.createFollower(followsDTO);
             return new ResponseEntity(followsDTO, HttpStatus.OK);
         } catch (Exception ex) {
             ex.printStackTrace();
             return new ResponseEntity<>(followsDTO, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    private void deleteFollower(FollowsDTO dto){
-        try (Session session = driver.session()){
-            session.run("MATCH (n:Person {handleName: '"+ dto.follower + "'}) " +
-                    "MATCH (m:Person {handleName: '"+dto.target+"'}) " +
-                    "MATCH (n)-[r:FOLLOWS]->(m) " +
-                    "DELETE r " +
-                    "WITH n, m " +
-                    "MATCH (n)<-[r:FOLLOWED_BY]-(m) " +
-                    "DELETE r");
-        }
-    }
-    private void createFollower(FollowsDTO dto){
-        try (Session session = driver.session()){
-            session.run("MATCH (n:Person {handleName: '"+ dto.follower + "'}) " +
-                    "MATCH (m:Person {handleName: '"+dto.target+"'}) " +
-                    "CREATE (n)-[:FOLLOWS]->(m) " +
-                    "CREATE (n)<-[:FOLLOWED_BY]-(m)");
         }
     }
 
@@ -90,14 +54,14 @@ public class PersonController {
         if (followsDTO.follower.equals(followsDTO.target))
             return new ResponseEntity<>(followsDTO, HttpStatus.BAD_REQUEST);
         try {
-            deleteFollower(followsDTO);
+            personRepository.deleteFollower(followsDTO);
             return new ResponseEntity(followsDTO, HttpStatus.OK);
         } catch (Exception ex) {
             return new ResponseEntity<>(followsDTO, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-
+    // Template for creating some start users
     @PostMapping("/create")
     public void createPeople() {
         try (Session session = driver.session()) {
@@ -117,6 +81,7 @@ public class PersonController {
         }
     }
 
+    // Template for cypher scripting with COUNT
     @GetMapping("/averageFollowers")
     public ResponseEntity followerAverage( ) {
         List<Record> recordStream;
@@ -133,47 +98,12 @@ public class PersonController {
 
     }
 
-    @PostMapping("/similarlikes")
-    public ResponseEntity<Object> similarLikes( ) {
-        try(Session session = driver.session()) {
-            Result graphExists = session.run(("CALL gds.graph.exists('similarLikes') YIELD exists"));
-            Record record = graphExists.single();
-            if(!record.get("exists").toString().equals("FALSE"))
-                session.run("CALL gds.graph.drop('similarLikes')");
-            String similarGraph = "CALL gds.graph.create(" +
-                    "    'similarLikes'," +
-                    "    ['Post', 'Person']," +
-                    "    {" +
-                    "        Liked: {" +
-                    "            type: 'LIKED'" +
-                    "        }" +
-                    "    }" +
-                    ")";
-            session.run(similarGraph);
-            Result result = session.run("CALL gds.nodeSimilarity.stream('similarLikes') " +
-                    "YIELD node1, node2, similarity " +
-                    "RETURN gds.util.asNode(node1).handleName AS Person1, gds.util.asNode(node2).handleName AS Person2, similarity " +
-                    "ORDER BY similarity DESCENDING, Person1, Person2");
-            List<Record> recordStream = result.stream().collect(Collectors.toList());
-            return new ResponseEntity<>(recordStream.toString(), HttpStatus.OK);
-        }
-    }
-
-    public void createPerson(String username) {
-        try (Session session = driver.session()) {
-            session.run("CREATE (:Person {handleName: "+username+"})");
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-    }
-
-
     @GetMapping("")
     public String getPeople(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userName = authentication.getName();
         //need sorting in query, using findall for now
-        List<String> persons = getAllNotFollowing(userName);
+        List<String> persons = personRepository.getAllNotFollowing(userName);
         model.addAttribute("people",persons);
         model.addAttribute("username",userName);
         return "people";
@@ -184,57 +114,12 @@ public class PersonController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userName = authentication.getName();
         //find the people the user is following
-        List<String> persons = getAllFollowing(userName);
+        List<String> persons = personRepository.getAllFollowing(userName);
         model.addAttribute("people",persons);
         model.addAttribute("username",userName);
         return "following";
     }
 
-    private List<String> getAllFollowing(String handlename){
-        List<Record> recordStream;
-        List<String> following = new ArrayList<>();
-        try(Session session = driver.session()){
-            Result result = session.run("MATCH (n:Person {handleName: '"+handlename+"'}) " +
-                    "MATCH (n)-[r:FOLLOWS]->(m) " +
-                    "return m");
-            recordStream = result.stream().collect(Collectors.toList());
-            for (Record rec: recordStream) {
-                // rec.get(m) BECAUSE WE WE RETURN M IN CYPHER THIS IS THE RECORD'S NAME. MUST GET IT FIRST.
-                //System.out.println(rec.get("m").get("handleName"));
-                String handleName = rec.get("m").get("handleName").toString();
-                following.add(handleName.substring(1, handleName.length()-1));
-                //System.out.println(rec.get("properties").get("handleName").toString());
-            }
-            return following;
-        }catch (Exception ex) {
-            ex.printStackTrace();
-            return following;
-        }
-    }
 
-    private List<String> getAllNotFollowing(String handlename){
-        List<Record> recordStream;
-        List<String> following = new ArrayList<>();
-        try(Session session = driver.session()){
-            Result result = session.run("MATCH (n:Person {handleName: '"+handlename+"'}) " +
-                    "MATCH (p:Person) " +
-                    "WHERE NOT (n)-[:FOLLOWS]->(p) AND NOT p.handleName = n.handleName " +
-                    "RETURN p");
-            recordStream = result.stream().collect(Collectors.toList());
-            for (Record rec: recordStream) {
-                // rec.get(m) BECAUSE WE WE RETURN M IN CYPHER THIS IS THE RECORD'S NAME. MUST GET IT FIRST.
-                //System.out.println(rec.get("m").get("handleName"));
-                String handleName = rec.get("p").get("handleName").toString();
-                following.add(handleName.substring(1, handleName.length()-1));
-                //System.out.println(rec.get("properties").get("handleName").toString());
-            }
-
-            return following;
-        }catch (Exception ex) {
-            ex.printStackTrace();
-            return following;
-        }
-
-    }
 
 }

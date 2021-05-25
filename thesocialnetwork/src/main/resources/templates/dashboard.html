@@ -14,16 +14,38 @@
 </head>
 <body>
 <div class="container-fluid mt-2">
-    <h1>This is the dashboard</h1>
     <div class="row">
-        <div class="col-4">
-            <button th:attr="data-user=${name}" onclick="ShowNotifications(this)">Show notifications</button>
-            <iframe style="height: 400px; width: 100%;" id="notifications"
-                    th:src="'/chat/notifications?name=' + ${name}"
-                    title="chat"></iframe>
+        <div class="col-6">
+            <h1>This is the dashboard</h1>
         </div>
-        <div class="col-4">The Real News Feed</div>
-        <div class="col-4">
+        <div class="col-6" style="text-align: right">
+            <a class="btn btn-primary" href="#" th:href="@{/logout}">Log Out</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <div style="height: 50%;">
+                <button th:attr="data-user=${name}" onclick="ShowNotifications(this)">Show notifications</button>
+                <iframe style="height: 400px; width: 100%;" id="notifications"
+                        th:src="'/chat/notifications?name=' + ${name}"
+                        title="chat"></iframe>
+            </div>
+            <div style="height: 50%;">
+                <div >Create Post</div>
+                <iframe style="height: 400px; width: 100%;" id="newpost" th:src="'/post/create'"
+                        title="chat"></iframe>
+            </div>
+        </div>
+        <div class="col-6">
+            <div style="height: 100%;">
+                <div>Your News Feed</div>
+                <iframe style="height: 97%; width: 100%;" id="newsfeed"
+                        th:src="'/post'"
+                        title="chat"></iframe>
+            </div>
+        </div>
+        <div class="col-3">
             <div style="height: 50%">
                 <div>Following</div>
                 <iframe style="height: 400px; width: 100%;" id="followingView" th:src="'/person/following'"

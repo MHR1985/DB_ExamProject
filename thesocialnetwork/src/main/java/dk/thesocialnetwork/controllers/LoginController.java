@@ -27,9 +27,9 @@ public class LoginController {
 
     private final Driver driver;
 
-    public LoginController(PersonRepository personRepository, Driver driver) {
-        this.personRepository = personRepository;
+    public LoginController(Driver driver) {
         this.driver = driver;
+        this.personRepository = new PersonRepository(driver);
     }
 
     @Autowired
@@ -40,13 +40,13 @@ public class LoginController {
     public ResponseEntity<AjaxDTO> createUser(@ModelAttribute User user) {
         String username = user.getUsername();
         AjaxDTO ajaxDTO = new AjaxDTO();
-        if (userRepository.findUserWithUsername(username) == null && personRepository.getPersonByHandleName(username) == null) {
+        if (userRepository.findUserWithUsername(username) == null && personRepository.getHandleName(username) == null) {
             try(Session session = driver.session()) {
                 //Maybe use JDBC Templates?
                 userRepository.save(new User(username, encoder.encode(user.getPassword())));
                 //Create User in Neo4j
+                personRepository.createPerson(username);
                 //personRepository.save(new Person(username));
-                session.run("CREATE (:Person {handleName: \"" + user.getUsername() + "\"})");
                 ajaxDTO.setSuccess("User created you can now login");
                 return new ResponseEntity<>(ajaxDTO, HttpStatus.OK);
             } catch (Exception e) {

@@ -46,11 +46,4 @@ public class ChatController {
         model.addAttribute("history", history);
         return "chat";
     }
-
-    private List<String> removeDuplicates(List<String> list) {
-        Set<String> set = new HashSet<>(list);
-        list.clear();
-        list.addAll(set);
-        return list;
-    }
 }

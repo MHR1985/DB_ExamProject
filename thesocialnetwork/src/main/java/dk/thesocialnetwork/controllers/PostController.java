@@ -1,23 +1,27 @@
 package dk.thesocialnetwork.controllers;
 
+import com.google.gson.Gson;
 import dk.thesocialnetwork.dto.CreatePostDTO;
 import dk.thesocialnetwork.dto.LikedPostDTO;
 import dk.thesocialnetwork.repository.PostRepository;
+import dk.thesocialnetwork.util.HelperUtil;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Record;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RestController
+@Controller
 @RequestMapping("/post")
+@CrossOrigin
 public class PostController {
 
 
@@ -26,31 +30,43 @@ public class PostController {
     private final Driver driver;
     private ArrayList<String> taggedPeople;
 
-    public PostController(PostRepository postRepository, Driver driver) {
-        this.postRepository = postRepository;
+    public PostController( Driver driver) {
         this.driver = driver;
     }
 
-    @PostMapping(consumes = "application/json", produces = "application/json")
-    public ResponseEntity<CreatePostDTO> createPost(@RequestBody CreatePostDTO createPostDTO) {
-        try (Session session = driver.session()) {
-            Result result = session.run("MATCH (n:Person {handleName: '" + createPostDTO.getAuthor() + "'}) " +
-                    "CREATE (p:Post {text: '" + createPostDTO.getText() + "', timeStamp: '" + LocalDateTime.now() + "'}) " +
-                    "CREATE (n)-[: CREATED_POST]->(p)" +
-                    "RETURN id(p) AS post_id");
-            Record record = result.single();
-            String id = record.get("post_id").toString();
-            for (String taggedPerson : createPostDTO.getTaggedPeople()) {
-                session.run("MATCH (" + taggedPerson + ":Person {handleName: '" + taggedPerson + "'}) " +
-                        "MATCH (p:Post) " +
-                        "WHERE ID(p) = " + id + " " +
-                        "CREATE (" + taggedPerson + ")-[: TAGGED_IN]->(p) ");
-            }
-            return new ResponseEntity(createPostDTO, HttpStatus.OK);
+    @GetMapping("/create")
+    public String getNewPostView() {
+        return "newpost";
+    }
+
+    @GetMapping("")
+    public String getNewsFeed(Model model) {
+        return "newsfeed";
+    }
+
+    @PostMapping(path = "", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<CreatePostDTO> createPost(@RequestBody CreatePostDTO post) {
+        try {
+            String author = HelperUtil.getUsernameFromLoggedIn();
+            String id = postRepository.createPost(post.getText(), author);
+            List<String> taggedPeople = getTaggedPeople(post.getText());
+            List<String> taggedPeopleFiltered = postRepository.findTaggedPeople(taggedPeople);
+            postRepository.addTaggedPeople(id, taggedPeopleFiltered);
+            return new ResponseEntity(HttpStatus.OK);
         } catch (Exception ex) {
             ex.printStackTrace();
-            return new ResponseEntity(createPostDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    private List<String> getTaggedPeople(String text) {
+        List<String> tags = new ArrayList<>();
+        for(String st : text.split(" ")){
+            if(st.startsWith("@")){
+                tags.add(st.substring(1));
+            }
+        }
+        return tags;
     }
 
     @PostMapping(path = "/like", consumes = "application/json", produces = "application/json")
@@ -94,22 +110,5 @@ public class PostController {
         }
         return new ResponseEntity<>(recordStream.toString(), HttpStatus.OK);
     }
-
-    @PostMapping("/create")
-    public void createPostsSample() {
-        try (Session session = driver.session()) {
-            List<String> taggedPeople = new ArrayList<>();
-            taggedPeople.add("Pernille");
-            createPost(new CreatePostDTO("Lorem Impsum", "Bob", taggedPeople));
-            createPost(new CreatePostDTO("LasdadasdasAdadadsad", "Pernille", taggedPeople));
-            taggedPeople.add("Bob");
-            createPost(new CreatePostDTO("Dette er en Post", "Dan", taggedPeople));
-            createPost(new CreatePostDTO("Whats this youve said to me, my good friend", "Svend", taggedPeople));
-            createPost(new CreatePostDTO("Hej med dig", "Eve", taggedPeople));
-            taggedPeople.add("Eve");
-            createPost(new CreatePostDTO("Hej med dig", "Dan", taggedPeople));
-        }
-    }
-
 
 }

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script
+            src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+            crossorigin="anonymous">
+
+    </script>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div>
+    <input id="text" type="text" name="text">
+    <button onclick="submitPost(this)">Submit</button>
+</div>
+</body>
+<script>
+    function submitPost() {
+        let text = "" + $("#text").val();
+        const json = {text:text}
+        let url = '/post';
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: JSON.stringify(json),
+            dataType: "json",
+            contentType: "application/json",
+            success: function() {
+                parent.newsfeed.contentWindow.location.reload();
+            }
+        });
+    }
+</script>
+</html>

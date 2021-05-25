@@ -26,6 +26,7 @@ public class ChatClient {
         return username;
     }
 
+    // Good example of how to subscribe to channels in redis
     public void connect() {
         chatThread = new Thread(new Runnable() {
             @Override
@@ -55,7 +56,7 @@ public class ChatClient {
 
     }
 
-    public void close(){
+    public void close() {
         if(chatThread!= null){
             System.out.println("closing connection for user: " + username + " in channel: " + getChannelName());
             chatThread.stop();
@@ -67,7 +68,7 @@ public class ChatClient {
             String channelName = getChannelName();
             System.out.println("Publishing to " + channelName);
             String editedMessage = username + ": " + message;
-            //jedis.publish(channelName, editedMessage);
+            //jedis.publish(channelName, editedMessage); this is how to publish to a channel
             addMessageToRedisHistory(editedMessage);
             notifyTarget();
         }

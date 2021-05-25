@@ -14,4 +14,8 @@ public class HelperUtil {
         }
         return authentication.isAuthenticated();
     }
+    public static String getUsernameFromLoggedIn() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getName();
+    }
 }
