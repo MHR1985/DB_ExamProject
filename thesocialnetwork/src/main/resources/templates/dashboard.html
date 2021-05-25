@@ -17,14 +17,21 @@
     <h1>This is the dashboard</h1>
     <div class="row">
         <div class="col-4">
-            <iframe style="height: 400px; width: 100%;" id="notifications" th:src="'/chat/notifications?name=' + ${name}"
+            <button th:attr="data-user=${name}" onclick="ShowNotifications(this)">Show notifications</button>
+            <iframe style="height: 400px; width: 100%;" id="notifications"
+                    th:src="'/chat/notifications?name=' + ${name}"
                     title="chat"></iframe>
         </div>
         <div class="col-4">The Real News Feed</div>
         <div class="col-4">
-            <div style="height: 50%">Followers</div>
             <div style="height: 50%">
-                <iframe style="height: 400px; width: 100%;" id="peopleView" th:src="'/chat/notifications?name=' + ${name}"
+                <div>Following</div>
+                <iframe style="height: 400px; width: 100%;" id="followingView" th:src="'/people/following'"
+                        title="chat"></iframe>
+            </div>
+            <div style="height: 50%">
+                <div>All people</div>
+                <iframe style="height: 400px; width: 100%;" id="peopleView" th:src="'/people'"
                         title="chat"></iframe>
             </div>
         </div>
@@ -49,11 +56,18 @@
     function refreshIframe() {
         setTimeout(function () {
             document.getElementById('notifications').contentWindow.location.reload();
+            document.getElementById('notifications').contentWindow.location.reload();
+            document.getElementById('notifications').contentWindow.location.reload();
             refreshIframe()
         }, 10000);
     }
 
-
+    function ShowNotifications(element) {
+        let user = $(element).data("user");
+        let url = "/chat/notifications?name=" + user;
+        $("#notifications").attr('src', url);
+        alert("changing notifications to :" + url)
+    }
 </script>
 
 </html>
