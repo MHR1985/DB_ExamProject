@@ -26,12 +26,12 @@
         <div class="col-4">
             <div style="height: 50%">
                 <div>Following</div>
-                <iframe style="height: 400px; width: 100%;" id="followingView" th:src="'/people/following'"
+                <iframe style="height: 400px; width: 100%;" id="followingView" th:src="'/person/following'"
                         title="chat"></iframe>
             </div>
             <div style="height: 50%">
                 <div>All people</div>
-                <iframe style="height: 400px; width: 100%;" id="peopleView" th:src="'/people'"
+                <iframe style="height: 400px; width: 100%;" id="peopleView" th:src="'/person'"
                         title="chat"></iframe>
             </div>
         </div>
@@ -55,8 +55,6 @@
 
     function refreshIframe() {
         setTimeout(function () {
-            document.getElementById('notifications').contentWindow.location.reload();
-            document.getElementById('notifications').contentWindow.location.reload();
             document.getElementById('notifications').contentWindow.location.reload();
             refreshIframe()
         }, 10000);

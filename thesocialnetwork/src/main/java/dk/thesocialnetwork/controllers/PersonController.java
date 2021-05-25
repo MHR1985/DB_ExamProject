@@ -9,13 +9,20 @@ import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RestController
+@Controller
 @RequestMapping("/person")
+@CrossOrigin
 public class PersonController {
 
     private PersonRepository personRepository;
@@ -28,12 +35,10 @@ public class PersonController {
         this.driver = driver;
     }
 
-    @GetMapping("")
+    /*@GetMapping("")
     public Iterable<Person> findAllPersons() {
         return personRepository.findAll();
     }
-
-
 
     @GetMapping("/{name}")
     public Person getPersonByName(@PathVariable String name) {
@@ -43,43 +48,54 @@ public class PersonController {
     public Iterable<Person> findAllToFollow() {
 
         return personRepository.findAll();
-    }
+    }*/
 
-
+    @Transactional
     @PostMapping(path = "/follow", consumes = "application/json", produces = "application/json")
     public ResponseEntity<FollowsDTO> createRelationShipPerson(@RequestBody FollowsDTO followsDTO) {
         if (followsDTO.follower.equals(followsDTO.target))
             return new ResponseEntity<>(followsDTO, HttpStatus.BAD_REQUEST);
-        try (Session session = driver.session()) {
-            session.run("MATCH (n:Person {handleName: '" + followsDTO.follower + "'}) " +
-                    "MATCH (m:Person {handleName: '" + followsDTO.target + "'}) " +
-                    "DROP (n)-[: FOLLOWS]->(m) if exists " +
-                    "DROP (n)<-[: FOLLOWED_BY]-(m) if exists " +
-                    "CREATE (n)-[: FOLLOWS]->(m)" +
-                    "CREATE (n)<-[: FOLLOWED_BY]-(m)");
+        try {
+            deleteFollower(followsDTO);
+            createFollower(followsDTO);
+            return new ResponseEntity(followsDTO, HttpStatus.OK);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new ResponseEntity<>(followsDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private void deleteFollower(FollowsDTO dto){
+        try (Session session = driver.session()){
+            session.run("MATCH (n:Person {handleName: '"+ dto.follower + "'}) " +
+                    "MATCH (m:Person {handleName: '"+dto.target+"'}) " +
+                    "MATCH (n)-[r:FOLLOWS]->(m) " +
+                    "DELETE r " +
+                    "WITH n, m " +
+                    "MATCH (n)<-[r:FOLLOWED_BY]-(m) " +
+                    "DELETE r");
+        }
+    }
+    private void createFollower(FollowsDTO dto){
+        try (Session session = driver.session()){
+            session.run("MATCH (n:Person {handleName: '"+ dto.follower + "'}) " +
+                    "MATCH (m:Person {handleName: '"+dto.target+"'}) " +
+                    "CREATE (n)-[:FOLLOWS]->(m) " +
+                    "CREATE (n)<-[:FOLLOWED_BY]-(m)");
+        }
+    }
+
+    @PostMapping(path = "/unfollow", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<FollowsDTO> deleteRelationShipPerson(@RequestBody FollowsDTO followsDTO) {
+        if (followsDTO.follower.equals(followsDTO.target))
+            return new ResponseEntity<>(followsDTO, HttpStatus.BAD_REQUEST);
+        try {
+            deleteFollower(followsDTO);
             return new ResponseEntity(followsDTO, HttpStatus.OK);
         } catch (Exception ex) {
             return new ResponseEntity<>(followsDTO, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-    /*
-    @PostMapping(path = "/unfollow", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<FollowsDTO> deleteRelationShipPerson(@RequestBody FollowsDTO followsDTO) {
-        if (followsDTO.follower.equals(followsDTO.target))
-            return new ResponseEntity<>(followsDTO, HttpStatus.BAD_REQUEST);
-        try (Session session = driver.session()) {
-            session.run("MATCH (n:Person {handleName: '" + followsDTO.follower + "'}) " +
-                    "MATCH (m:Person {handleName: '" + followsDTO.target + "'}) " +
-                    "DROP (n)-[: FOLLOWS]->(m) if exists " +
-                    "DROP (n)<-[: FOLLOWED_BY]-(m) if exists " +
-                    "CREATE (n)-[: FOLLOWS]->(m)" +
-                    "CREATE (n)<-[: FOLLOWED_BY]-(m)");
-            return new ResponseEntity(followsDTO, HttpStatus.OK);
-        } catch (Exception ex) {
-            return new ResponseEntity<>(followsDTO, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }*/
 
 
     @PostMapping("/create")
@@ -149,6 +165,76 @@ public class PersonController {
         }catch(Exception e){
             e.printStackTrace();
         }
+    }
+
+
+    @GetMapping("")
+    public String getPeople(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userName = authentication.getName();
+        //need sorting in query, using findall for now
+        List<String> persons = getAllNotFollowing(userName);
+        model.addAttribute("people",persons);
+        model.addAttribute("username",userName);
+        return "people";
+    }
+
+    @GetMapping("/following")
+    public String getFollowing(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userName = authentication.getName();
+        //find the people the user is following
+        List<String> persons = getAllFollowing(userName);
+        model.addAttribute("people",persons);
+        model.addAttribute("username",userName);
+        return "following";
+    }
+
+    private List<String> getAllFollowing(String handlename){
+        List<Record> recordStream;
+        List<String> following = new ArrayList<>();
+        try(Session session = driver.session()){
+            Result result = session.run("MATCH (n:Person {handleName: '"+handlename+"'}) " +
+                    "MATCH (n)-[r:FOLLOWS]->(m) " +
+                    "return m");
+            recordStream = result.stream().collect(Collectors.toList());
+            for (Record rec: recordStream) {
+                // rec.get(m) BECAUSE WE WE RETURN M IN CYPHER THIS IS THE RECORD'S NAME. MUST GET IT FIRST.
+                //System.out.println(rec.get("m").get("handleName"));
+                String handleName = rec.get("m").get("handleName").toString();
+                following.add(handleName.substring(1, handleName.length()-1));
+                //System.out.println(rec.get("properties").get("handleName").toString());
+            }
+            return following;
+        }catch (Exception ex) {
+            ex.printStackTrace();
+            return following;
+        }
+    }
+
+    private List<String> getAllNotFollowing(String handlename){
+        List<Record> recordStream;
+        List<String> following = new ArrayList<>();
+        try(Session session = driver.session()){
+            Result result = session.run("MATCH (n:Person {handleName: '"+handlename+"'}) " +
+                    "MATCH (p:Person) " +
+                    "WHERE NOT (n)-[:FOLLOWS]->(p) AND NOT p.handleName = n.handleName " +
+                    "RETURN p");
+            recordStream = result.stream().collect(Collectors.toList());
+            for (Record rec: recordStream) {
+                // rec.get(m) BECAUSE WE WE RETURN M IN CYPHER THIS IS THE RECORD'S NAME. MUST GET IT FIRST.
+                //System.out.println(rec.get("m").get("handleName"));
+                String handleName = rec.get("p").get("handleName").toString();
+                following.add(handleName.substring(1, handleName.length()-1));
+                //System.out.println(rec.get("properties").get("handleName").toString());
+            }
+
+            return following;
+        }catch (Exception ex) {
+            ex.printStackTrace();
+            return following;
+        }
+
     }
 
 }
