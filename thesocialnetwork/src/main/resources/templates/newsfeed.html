@@ -1,10 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
+<div class="container" th:each="post : ${posts}">
+    <div class="row">
+        <div class="col-6">
+            <span th:text="${post.text}"></span>
+            <div><b>Tagged People:</b></div>
+            <span th:each="taggedPerson : ${post.taggedPeople}">
+                <span th:text="${taggedPerson}"></span>
+            </span>
+        </div>
+        <div class="col-3">
+            <button th:attr="data-target=${handleName},data-user=${username}" onclick="follow(this)">follow</button>
+        </div>
+        <div class="col-3">
+            <button th:attr="data-target=${handleName},data-user=${username}" onclick="openChat(this)">chat</button>
+        </div>
 
+    </div>
+</div>
 </body>
 </html>

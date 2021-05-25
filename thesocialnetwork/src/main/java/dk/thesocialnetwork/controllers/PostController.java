@@ -11,6 +11,7 @@ import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +33,7 @@ public class PostController {
 
     public PostController( Driver driver) {
         this.driver = driver;
+        postRepository = new PostRepository(driver);
     }
 
     @GetMapping("/create")
@@ -41,6 +43,7 @@ public class PostController {
 
     @GetMapping("")
     public String getNewsFeed(Model model) {
+
         return "newsfeed";
     }
 
@@ -110,5 +113,7 @@ public class PostController {
         }
         return new ResponseEntity<>(recordStream.toString(), HttpStatus.OK);
     }
+
+
 
 }

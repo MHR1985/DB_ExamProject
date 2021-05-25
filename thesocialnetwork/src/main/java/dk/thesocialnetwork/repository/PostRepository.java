@@ -1,5 +1,6 @@
 package dk.thesocialnetwork.repository;
 
+import dk.thesocialnetwork.dto.PostDTO;
 import dk.thesocialnetwork.model.Person;
 import dk.thesocialnetwork.model.Post;
 import org.neo4j.driver.Driver;
@@ -25,7 +26,7 @@ public class PostRepository {
         this.driver = driver;
     }
 
-    public String createPost(String text, String author){
+    public String createPost(String text, String author) {
         try (Session session = driver.session()) {
             Result result = session.run("MATCH (n:Person {handleName: '" + author + "'}) " +
                     "CREATE (p:Post {text: '" + text + "', timeStamp: '" + LocalDateTime.now() + "'}) " +
@@ -34,7 +35,7 @@ public class PostRepository {
             Record record = result.single();
             String id = record.get("post_id").toString();
             return id;
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
         return null;
@@ -56,8 +57,8 @@ public class PostRepository {
         List<Record> recordStream = new ArrayList<>();
         String build = "WITH [";
         try (Session session = driver.session()) {
-            for (int i = 0; i <= taggedPeople.size(); i++) {
-                if (i == taggedPeople.size()) {
+            for (int i = 0; i <= taggedPeople.size() - 1; i++) {
+                if (i == taggedPeople.size() - 1) {
                     build += "'" + taggedPeople.get(i) + "'";
                 } else {
                     build += "'" + taggedPeople.get(i) + "', ";
@@ -69,11 +70,40 @@ public class PostRepository {
                     "RETURN p";
             Result result = session.run(build);
             recordStream = result.stream().collect(Collectors.toList());
-            for (Record rec: recordStream) {
+            for (Record rec : recordStream) {
                 String handleName = rec.get("p").get("handleName").toString();
-                foundPeople.add(handleName.substring(1, handleName.length()-1));
+                foundPeople.add(handleName.substring(1, handleName.length() - 1));
             }
             return foundPeople;
         }
     }
+
+    /*public List<PostDTO> getPostsFromFollowes(String username) {
+        List<Record> recordStream;
+        List<String> follows = new ArrayList<>();
+        try (Session session = driver.session()) {
+            Result result = session.run("MATCH (n:Person {handleName: '"+username+"'}) " +
+                    "MATCH (n)-[r:FOLLOWS]->(m) " +
+                    "MATCH (m)-[:CREATED_POST]->(p) " +
+                    "return p, m, id(p) AS post_id" +
+                    "ORDER BY p.timeStamp DESC");
+            recordStream = result.stream().collect(Collectors.toList());
+            for (Record rec : recordStream) {
+                String id = rec.get("post_id").toString();
+                id = id.substring(1, id.length() - 1);
+
+                String timestamp = rec.get("p").get("timeStamp").toString();
+                timestamp = timestamp.substring(1, timestamp.length() - 1);
+
+                String author = rec.get("m").get("handleName").toString();
+                author  = author.substring(1, author.length() - 1);
+
+                PostDTO postDto = new PostDTO(id,);
+
+                String handleName = rec.get("p").get("handleName").toString();
+
+            }
+        }
+        return null;
+    }*/
 }
