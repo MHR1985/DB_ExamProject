@@ -1,13 +1,13 @@
 package dk.thesocialnetwork.controllers;
 
+import dk.thesocialnetwork.dto.PaginationDTO;
 import dk.thesocialnetwork.logic.ChatClient;
 import dk.thesocialnetwork.logic.ChatClientHandler;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.*;
@@ -36,14 +36,30 @@ public class ChatController {
     }
 
     @GetMapping("")
-    public String chat(@RequestParam(name = "name", required = true, defaultValue = "martin") String name, @RequestParam(name = "target", required = true, defaultValue = "muggi") String target, Model model) {
+    public String chat(@RequestParam(name = "name", required = true, defaultValue = "martin") String name, @RequestParam(name = "target", required = true, defaultValue = "muggi") String target, @RequestParam(name = "index", required = false, defaultValue = "0") int index, Model model) {
         ChatClientHandler handler = new ChatClientHandler();
         ChatClient client = handler.createClient(name, target);
-        List<String> history = client.getJedisChatHistory();
+        List<String> history = client.getJedisChatHistory(index, 10 );
         Collections.reverse(history);
         model.addAttribute("name", name);
         model.addAttribute("target", target);
         model.addAttribute("history", history);
+        model.addAttribute("index", index);
+        model.addAttribute("historyLength", history.size());
         return "chat";
+    }
+
+    @GetMapping("/pagination")
+    public ResponseEntity<List<String>> pagination(@RequestBody PaginationDTO pDTO) {
+        try {
+            ChatClientHandler handler = new ChatClientHandler();
+            ChatClient client = handler.createClient(pDTO.getName(), pDTO.getTarget());
+            List<String> history = client.getJedisChatHistory(pDTO.getIndex(), 10 );
+            Collections.reverse(history);
+            return new ResponseEntity<>(history, HttpStatus.OK);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

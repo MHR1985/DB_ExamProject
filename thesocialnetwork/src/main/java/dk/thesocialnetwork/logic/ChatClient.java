@@ -119,7 +119,7 @@ public class ChatClient {
         String historyKey = getHistoryKey();
         try (Jedis jedis = jedisPool.getResource()) {
             long listSize = jedis.llen(historyKey);
-            if (listSize >= 10) {
+            if (listSize >= 109) {
                 jedis.lpop(historyKey);
             }
             jedis.rpush(historyKey,message);
@@ -127,10 +127,10 @@ public class ChatClient {
         }
     }
 
-    public List<String> getJedisChatHistory(){
+    public List<String> getJedisChatHistory(int index, int range){
         List<String> history;
         try (Jedis jedis = jedisPool.getResource()) {
-            history = jedis.lrange(getHistoryKey(),0,10);
+            history = jedis.lrange(getHistoryKey(),index,index+range);
             return history;
         }
     }
