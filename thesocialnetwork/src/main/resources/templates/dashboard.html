@@ -77,7 +77,17 @@
 
     function refreshIframe() {
         setTimeout(function () {
-            document.getElementById('notifications').contentWindow.location.reload();
+            let iframe = document.getElementById('notifications');
+            let name = iframe.contentWindow.document.getElementById("nameInput");
+            let target = iframe.contentWindow.document.getElementById("targetInput");
+            let index = localStorage.getItem(name+target+"index");
+            if(index != null && index != undefined){
+                let query = "?name="+name+"&target=" + target + "&index=" + index;
+                let url = iframe.window.location.hostname + "/chat" + query;
+                iframe.src = url;
+            }else{
+                document.getElementById('notifications').contentWindow.location.reload();
+            }
             refreshIframe()
         }, 10000);
     }
