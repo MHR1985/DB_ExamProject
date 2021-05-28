@@ -78,12 +78,15 @@
     function refreshIframe() {
         setTimeout(function () {
             let iframe = document.getElementById('notifications');
-            let name = iframe.contentWindow.document.getElementById("nameInput");
-            let target = iframe.contentWindow.document.getElementById("targetInput");
+            let name = iframe.contentWindow.document.getElementById("nameInput").value;
+            console.log(name);
+            let target = iframe.contentWindow.document.getElementById("targetInput").value;
+            console.log(target);
             let index = localStorage.getItem(name+target+"index");
+            console.log(index);
             if(index != null && index != undefined){
                 let query = "?name="+name+"&target=" + target + "&index=" + index;
-                let url = iframe.window.location.hostname + "/chat" + query;
+                let url = "/chat" + query;
                 iframe.src = url;
             }else{
                 document.getElementById('notifications').contentWindow.location.reload();

@@ -9,6 +9,7 @@
             crossorigin="anonymous">
 
     </script>
+
 </head>
 <body>
 <form id="chatForm" action="/chat/send">
@@ -25,6 +26,9 @@
 
 </div>
 <input type="hidden" id="inputIndex" th:value="${index}">
+
+<button th:if="${index > 0}" onclick="pagination(-10)"> PREVIOUS </button>
+<button th:if="${historyLength == 10}" onclick="pagination(10)"> NEXT </button>
 
 <script>
     function submitChatForm() {
@@ -43,11 +47,10 @@
         let val = e.value; // get the value.
         localStorage.setItem(key, val);// Every time user writing something, the localStorage's value will override .
     }
-
     //get the saved value function - return the value of "v" from localStorage.
     function getSavedValue(v) {
         if (!localStorage.getItem(v)) {
-            return "";// You can change this to your defualt value.
+            return "";// You can change this to your default value.
         }
         return localStorage.getItem(v);
     }
@@ -64,26 +67,37 @@
         let index = parseInt(currentIndex) + range;
         let name = "" + $("#nameInput").val();
         let target = "" + $("#targetInput").val();
-        let json = {index: index, name: name, target: target}
+        let queryParam = {index: index, name: name, target: target}
         $.ajax({
             type: "GET",
             url: "/chat/pagination",
-            data: JSON.stringify(json),
-            dataType: "json",
+            data: queryParam,
             contentType: "application/json",
+            dataType: "json",
             success: function (data) {
-                let element = "" + $("#historyDiv");
-                element.html("");
-                let html = "";
-                for (let i = 0; i < data.length; i++) {
-                    html += "<p>" + data[i] + "<\p>";
-                }
-                element.html(html);
+                localStorage.setItem(name+target+"index", index);
+                $("#inputIndex").val(index);
+                reload();
             }
         });
     }
+
+    function reload(){
+        let name = document.getElementById("nameInput").value;
+        console.log(name);
+        let target = document.getElementById("targetInput").value;
+        console.log(target);
+        let index = localStorage.getItem(name+target+"index");
+        console.log(index);
+        if(index != null && index != undefined){
+            let query = "?name="+name+"&target=" + target + "&index=" + index;
+            let url = "/chat" + query;
+            window.location.href = url;
+        }else{
+            window.location.reload();
+        }
+    }
+
 </script>
-<button th:if="${index > 0} " onclick="pagination(-10)"> <<</button>
-<button th:if="${historyLength == 10}" onclick="pagination(10)"> >></button>
 </body>
 </html>
