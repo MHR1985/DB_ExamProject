@@ -32,7 +32,7 @@
                         title="chat"></iframe>
             </div>
             <div style="height: 50%;">
-                <div >Create Post</div>
+                <div>Create Post</div>
                 <iframe style="height: 400px; width: 100%;" id="newpost" th:src="'/post/create'"
                         title="chat"></iframe>
             </div>
@@ -78,17 +78,22 @@
     function refreshIframe() {
         setTimeout(function () {
             let iframe = document.getElementById('notifications');
-            let name = iframe.contentWindow.document.getElementById("nameInput").value;
-            console.log(name);
-            let target = iframe.contentWindow.document.getElementById("targetInput").value;
-            console.log(target);
-            let index = localStorage.getItem(name+target+"index");
-            console.log(index);
-            if(index != null && index != undefined){
-                let query = "?name="+name+"&target=" + target + "&index=" + index;
-                let url = "/chat" + query;
-                iframe.src = url;
-            }else{
+            let nameElement = iframe.contentWindow.document.getElementById("nameInput");
+            if (nameElement != null && nameElement != undefined) {
+                name = nameElement.value;
+                let target = iframe.contentWindow.document.getElementById("targetInput").value;
+
+                let index = localStorage.getItem(name + target + "index");
+
+                if (index != null && index != undefined) {
+                    let query = "?name=" + name + "&target=" + target + "&index=" + index;
+                    let url = "/chat" + query;
+                    iframe.src = url;
+                }else{
+                    document.getElementById('notifications').contentWindow.location.reload();
+                }
+
+            } else {
                 document.getElementById('notifications').contentWindow.location.reload();
             }
             refreshIframe()
