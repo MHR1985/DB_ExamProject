@@ -130,7 +130,7 @@ public class ChatClient {
     public List<String> getJedisChatHistory(int index, int range){
         List<String> history;
         try (Jedis jedis = jedisPool.getResource()) {
-            history = jedis.lrange(getHistoryKey(),index,index+range);
+            history = jedis.lrange(getHistoryKey(),index,index+range-1);
             return history;
         }
     }

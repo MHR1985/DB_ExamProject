@@ -40,7 +40,6 @@ public class ChatController {
         ChatClientHandler handler = new ChatClientHandler();
         ChatClient client = handler.createClient(name, target);
         List<String> history = client.getJedisChatHistory(index, 10 );
-        Collections.reverse(history);
         model.addAttribute("name", name);
         model.addAttribute("target", target);
         model.addAttribute("history", history);
@@ -49,13 +48,13 @@ public class ChatController {
         return "chat";
     }
 
-    @GetMapping("/pagination")
-    public ResponseEntity<List<String>> pagination(@RequestBody PaginationDTO pDTO) {
+    @GetMapping(path = "/pagination", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<List<String>> pagination(@RequestParam(name = "index", required = false, defaultValue = "0") int index, @RequestParam(name = "name", required = true) String name, @RequestParam(name = "target", required = true) String target) {
         try {
+            PaginationDTO pDTO = new PaginationDTO(index, name, target);
             ChatClientHandler handler = new ChatClientHandler();
             ChatClient client = handler.createClient(pDTO.getName(), pDTO.getTarget());
             List<String> history = client.getJedisChatHistory(pDTO.getIndex(), 10 );
-            Collections.reverse(history);
             return new ResponseEntity<>(history, HttpStatus.OK);
         } catch (Exception ex) {
             ex.printStackTrace();
