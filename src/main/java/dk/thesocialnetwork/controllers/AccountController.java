@@ -62,12 +62,12 @@ public class AccountController {
         Image previousImage = imageRepository.findImageWithUsername(username,imgTitle);
         if (previousImage != null)
             return new ResponseEntity(HttpStatus.CONFLICT);
-        File directory = new File("thesocialnetwork/images/");
+        File directory = new File("images/");
 
         String filename = multipart.getOriginalFilename();
         // Needs some way to make sure filename will be unique.
         int fileCount=directory.list().length+1;
-        String path = "thesocialnetwork/images/" + fileCount + "_" + filename;
+        String path = "images/" + fileCount + "_" + filename;
 
         path = path.replace("\\", "/");
 

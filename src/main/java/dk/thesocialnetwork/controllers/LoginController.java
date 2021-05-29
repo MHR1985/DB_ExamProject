@@ -68,10 +68,6 @@ public class LoginController {
 
     @GetMapping("")
     public String getLoginPage() throws IOException {
-       /* Path workingDirector = Paths.get(System.getProperty("user.dir")+"/thesocialnetwork/images");
-        String path = System.getProperty("user.dir");
-        File file = new File(path);
-        System.out.println(file.g);*/
         return "login";
     }
 
