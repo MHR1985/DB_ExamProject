@@ -1,11 +1,15 @@
 package dk.thesocialnetwork.controllers;
 
+import dk.thesocialnetwork.model.Image;
+import dk.thesocialnetwork.model.User;
+import dk.thesocialnetwork.repository.UserRepository;
+import dk.thesocialnetwork.util.HelperUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import javax.activation.FileTypeMap;
 import java.io.*;
@@ -16,23 +20,33 @@ import java.nio.file.Files;
 @CrossOrigin
 public class ImageController {
 
+    @Autowired
+    UserRepository userRepository;
 
-   @GetMapping("/{fileName}")
-    public ResponseEntity<byte[]> getImage(@PathVariable String fileName) throws IOException {
-        File img = new File("thesocialnetwork/images/"+fileName);
+    @GetMapping("")
+    public ResponseEntity<byte[]> getActiveImage() throws IOException {
+        String userName = HelperUtil.getUsernameFromLoggedIn();
+        File img = getUserImage(userName);
+        if (img == null)
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
         return ResponseEntity.ok().contentType(MediaType.valueOf(FileTypeMap.getDefaultFileTypeMap().getContentType(img))).body(Files.readAllBytes(img.toPath()));
     }
 
-
-    //Use first line to save file to path, delete method after use
-    public void saveFileToRelative(String fileName) throws FileNotFoundException, UnsupportedEncodingException {
-        File test = new File("thesocialnetwork/images/"+fileName);
-        PrintWriter writer = new PrintWriter(test, "UTF-8");
-        writer.println("The first line");
-        writer.println("The second line");
-        writer.close();
-
+    @GetMapping("/{username}")
+    public ResponseEntity<byte[]> getImage(@PathVariable String username) throws IOException {
+        File img = getUserImage(username);
+        return ResponseEntity.ok().contentType(MediaType.valueOf(FileTypeMap.getDefaultFileTypeMap().getContentType(img))).body(Files.readAllBytes(img.toPath()));
     }
+
+    public File getUserImage(String username) {
+        User user = userRepository.findUserWithUsername(username);
+        if (user == null || user.getCurrentImg() == null)
+            return new File("thesocialnetwork/src/main/resources/images/anonym.jpg");
+        Image activeImage = user.getCurrentImg();
+        File img = new File(activeImage.getUrl());
+        return img;
+    }
+
 }
 
 

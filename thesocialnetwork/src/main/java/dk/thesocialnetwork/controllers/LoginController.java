@@ -15,6 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+import java.io.IOException;
+
 @Controller
 @RequestMapping("/login")
 @CrossOrigin
@@ -64,7 +67,11 @@ public class LoginController {
 
 
     @GetMapping("")
-    public String getLoginPage() {
+    public String getLoginPage() throws IOException {
+       /* Path workingDirector = Paths.get(System.getProperty("user.dir")+"/thesocialnetwork/images");
+        String path = System.getProperty("user.dir");
+        File file = new File(path);
+        System.out.println(file.g);*/
         return "login";
     }
 

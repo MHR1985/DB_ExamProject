@@ -7,6 +7,7 @@
             crossorigin="anonymous">
 
     </script>
+
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
@@ -25,10 +26,11 @@
             type: "POST",
             url: url,
             data: JSON.stringify(json),
-            dataType: "json",
             contentType: "application/json",
             success: function() {
+                $("#text").val("");
                 parent.newsfeed.contentWindow.location.reload();
+                alert("Your post has been created")
             }
         });
     }

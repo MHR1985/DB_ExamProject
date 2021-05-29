@@ -106,4 +106,35 @@ public class PostRepository {
             return follows;
         }
     }
+
+    public List<PostDTO> getPostsByUsername (String username) {
+        List<Record> recordStream;
+        List<PostDTO> follows = new ArrayList<>();
+        try (Session session = driver.session()) {
+            Result result = session.run("MATCH (n:Person {handleName: '"+username+"'}) " +
+                    "MATCH (n)-[:CREATED_POST]->(p) " +
+                    "OPTIONAL MATCH (v)-[t:TAGGED_IN]->(p) " +
+                    "return p, n, id(p) AS post_id, collect(v) as v " +
+                    "ORDER BY p.timeStamp DESC");
+            recordStream = result.stream().collect(Collectors.toList());
+            for (Record rec : recordStream) {
+                String id = rec.get("post_id").toString();
+                List<String> tags = new ArrayList<>();
+                for(Value val: rec.get("v").values()){
+                    String taggedPerson = val.get("handleName").toString();
+                    taggedPerson = taggedPerson.substring(1, taggedPerson.length() - 1);
+                    tags.add(taggedPerson);
+                }
+                String text = rec.get("p").get("text").toString();
+                text = text.substring(1, text.length() - 1);
+                String timestamp = rec.get("p").get("timeStamp").toString();
+                timestamp = timestamp.substring(1, timestamp.length() - 1);
+                String author = rec.get("n").get("handleName").toString();
+                author  = author.substring(1, author.length() - 1);
+                PostDTO postDto = new PostDTO(id,text,tags,timestamp,author);
+                follows.add(postDto);
+            }
+            return follows;
+        }
+    }
 }

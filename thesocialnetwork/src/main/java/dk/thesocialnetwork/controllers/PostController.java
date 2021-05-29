@@ -1,6 +1,5 @@
 package dk.thesocialnetwork.controllers;
 
-import com.google.gson.Gson;
 import dk.thesocialnetwork.dto.CreatePostDTO;
 import dk.thesocialnetwork.dto.LikedPostDTO;
 import dk.thesocialnetwork.dto.PostDTO;
@@ -12,7 +11,6 @@ import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -45,8 +43,10 @@ public class PostController {
     @GetMapping("")
     public String getNewsFeed(Model model) {
         String author = HelperUtil.getUsernameFromLoggedIn();
-        List<PostDTO> postDTOS = postRepository.getPostsFromFollowes(author);
-        model.addAttribute("posts", postDTOS);
+        List<PostDTO> postsFromFollowes = postRepository.getPostsFromFollowes(author);
+        List<PostDTO> postsFromUser = postRepository.getPostsByUsername(author);
+        model.addAttribute("followerPosts", postsFromFollowes);
+        model.addAttribute("userPosts",postsFromUser);
         return "newsfeed";
     }
 

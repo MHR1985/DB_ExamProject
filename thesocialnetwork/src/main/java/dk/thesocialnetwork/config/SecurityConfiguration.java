@@ -21,10 +21,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.headers().frameOptions().sameOrigin();
-        http.csrf().disable().authorizeRequests().antMatchers("/login", "login/createuser").permitAll().antMatchers("/","/dashboard**","/chat","/chat/send","chat/notifications").access("hasAuthority('0')")
+        http.headers().frameOptions().sameOrigin().and().
+        csrf().disable().authorizeRequests().antMatchers("/login", "/login/createuser").permitAll().antMatchers("/","/dashboard**","/chat**, /profile**, /image**").authenticated()
                 .and().formLogin().loginPage("/login").usernameParameter("username").passwordParameter("password").defaultSuccessUrl("/")
                 .and().logout().logoutSuccessUrl("/login");
+        http.exceptionHandling().accessDeniedPage("/login");
 
     }
 

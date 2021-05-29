@@ -19,15 +19,15 @@
             <h1>This is the dashboard</h1>
         </div>
         <div class="col-6" style="text-align: right">
-            <a class="btn btn-primary" href="#" th:href="@{/logout}">Log Out</a>
-            <a class="btn btn-primary" href="#" th:href="@{/profile}">Change Profile</a>
+            <a class="btn btn-danger" href="#" th:href="@{/logout}">Log Out</a>
+            <a class="btn btn-primary" href="#" th:href="@{/profile}">Change Picture</a>
         </div>
     </div>
 
     <div class="row">
         <div class="col-3">
             <div style="height: 50%;">
-                <button th:attr="data-user=${name}" onclick="ShowNotifications(this)">Show notifications</button>
+                <button class="btn btn-primary" th:attr="data-user=${name}" onclick="ShowNotifications(this)">Show notifications</button>
                 <iframe style="height: 400px; width: 100%;" id="notifications"
                         th:src="'/chat/notifications?name=' + ${name}"
                         title="chat"></iframe>
@@ -99,7 +99,7 @@
                 document.getElementById('notifications').contentWindow.location.reload();
             }
             refreshIframe()
-        }, 10000);
+        }, 5000);
     }
 
     function ShowNotifications(element) {

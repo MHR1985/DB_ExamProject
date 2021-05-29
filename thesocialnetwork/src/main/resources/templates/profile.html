@@ -11,16 +11,25 @@
     <title>Title</title>
 </head>
 <body>
-  <div>
-    <form id="profile" action="/profile" method="post" enctype="multipart/form-data">
-      <input type="file" id="myImg" name="filename">
-      <input type="text" id="imgTitle" name="imgTitle">
-      <input type="submit">
+<div>
+    <div>
+        <form id="profile" action="/profile" method="post" enctype="multipart/form-data">
+            <input type="file" id="myImg" name="filename">
+            <input type="text" id="imgTitle" name="imgTitle">
+            <input type="submit">
+        </form>
+    </div>
+    <div>Select Previous image</div>
+    <form id="previousImage" action="/profile/picture" method="post">
+        <select name="imageTitle" id="imageSelect">
+            <option th:each="image : ${images}" th:text="${image.title}" th:value="${image.title}"></option>
+        </select>
+        <input type="submit">
     </form>
-    <img th:if="${currentImage != null && currentImage.url != null}" th:src=${currentImage.url}>
-  </div>
+    <img th:if="${currentImage != null && currentImage.url != null}" style="height: 300px; width: 300px;" src=/image>
+</div>
 <script>
-    $( "#profile" ).submit(function( event ) {
+    $("#profile").submit(function (event) {
         event.preventDefault();
         var formObj = $(this);
         var formURL = formObj.attr("action");

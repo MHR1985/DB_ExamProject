@@ -1,25 +1,67 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
     <meta charset="UTF-8">
     <title>Title</title>
+    <script
+            src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+            crossorigin="anonymous">
+
+    </script>
 </head>
 <body>
-<div class="container" th:each="post : ${posts}">
+<div class="container">
     <div class="row">
         <div class="col-6">
-            <div><br>POST:</br></div>
-            <div th:text="${post.author}"></div>
-            <div th:text="${post.text}"></div>
-            <div th:if="${!post.taggedPeople.empty}">
-                <b>Tagged People:</b>
-                <ul th:each="taggedPerson : ${post.taggedPeople}">
-                    <li th:text="${taggedPerson}"></li>
-                </ul>
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="follower-tab" data-bs-toggle="tab"
+                            data-bs-target="#followerPosts" type="button" role="tab" aria-controls="followerPosts"
+                            aria-selected="true">Followers Posts
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="user-tab" data-bs-toggle="tab" data-bs-target="#userPosts"
+                            type="button" role="tab" aria-controls="userPosts" aria-selected="false">User Posts
+                    </button>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="followerPosts" role="tabpanel"
+                     aria-labelledby="follower-tab">
+                    <div th:each="post : ${followerPosts}" class="followerPosts">
+                        <div><br>POST:</br></div>
+                        <div th:text="${post.author}"></div>
+                        <div th:text="${post.text}"></div>
+                        <div th:if="${!post.taggedPeople.empty}">
+                            <b>Tagged People:</b>
+                            <ul th:each="taggedPerson : ${post.taggedPeople}">
+                                <li th:text="${taggedPerson}"></li>
+                            </ul>
+                        </div>
+                        <div th:text="${post.timeStamp}"></div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="userPosts" role="tabpanel" aria-labelledby="user-tab">
+                    <div th:each="post : ${userPosts}">
+                        <div><br>POST:</br></div>
+                        <div th:text="${post.author}"></div>
+                        <div th:text="${post.text}"></div>
+                        <div th:if="${!post.taggedPeople.empty}">
+                            <b>Tagged People:</b>
+                            <ul th:each="taggedPerson : ${post.taggedPeople}">
+                                <li th:text="${taggedPerson}"></li>
+                            </ul>
+                        </div>
+                        <div th:text="${post.timeStamp}"></div>
+                    </div>
+                </div>
             </div>
-            <div th:text="${post.timeStamp}"></div>
         </div>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
 </body>
 </html>

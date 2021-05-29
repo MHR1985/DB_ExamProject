@@ -10,7 +10,10 @@
 <body>
 <div class="container" th:each="handleName : ${people}">
     <div class="row">
-        <div class="col-6">
+        <div class="col-3">
+            <img th:src="${'/image/' + handleName}" style="height: 35px; width: 35px;"></img>
+        </div>
+        <div class="col-3">
             <a th:text="${handleName}"></a>
         </div>
         <div class="col-3">
