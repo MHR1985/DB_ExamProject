@@ -4,6 +4,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+
+import java.util.*;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -27,8 +29,13 @@ public class User {
     }
 
     private boolean active;
+    @OneToOne
+    private Image currentImg;
 
-    public User(Long id, String username, String password,boolean active) {
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Image> images  = new ArrayList<>();
+
+    public User(Long id, String username, String password, boolean active) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -87,5 +94,21 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public List<Image> getImages() {
+        return images;
+    }
+
+    public void setImages(List<Image> images) {
+        this.images = images;
+    }
+
+    public Image getCurrentImg() {
+        return currentImg;
+    }
+
+    public void setCurrentImg(Image currentImg) {
+        this.currentImg = currentImg;
     }
 }

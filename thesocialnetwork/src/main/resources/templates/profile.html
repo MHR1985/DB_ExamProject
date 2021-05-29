@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script
+            src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+            crossorigin="anonymous">
+
+    </script>
+    <title>Title</title>
+</head>
+<body>
+  <div>
+    <form id="profile" action="/profile" method="post" enctype="multipart/form-data">
+      <input type="file" id="myImg" name="filename">
+      <input type="text" id="imgTitle" name="imgTitle">
+      <input type="submit">
+    </form>
+    <img th:if="${currentImage != null && currentImage.url != null}" th:src=${currentImage.url}>
+  </div>
+<script>
+    $( "#profile" ).submit(function( event ) {
+        event.preventDefault();
+        var formObj = $(this);
+        var formURL = formObj.attr("action");
+        var formData = new FormData(this);
+        $.ajax({
+            url: formURL,
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            async: true,
+            cache: false,
+            enctype: "multipart/form-data",
+            success: function () {
+                window.location.reload();
+            }
+        });
+    });
+</script>
+</body>
+</html>
