@@ -79,7 +79,7 @@ public class PostRepository {
         List<Record> recordStream;
         List<PostDTO> follows = new ArrayList<>();
         try (Session session = driver.session()) {
-            Result result = session.run("MATCH (n:Person {handleName: 'kenneth'}) " +
+            Result result = session.run("MATCH (n:Person {handleName: '"+username+"'}) " +
                     "MATCH (n)-[r:FOLLOWS]->(m) " +
                     "MATCH (m)-[:CREATED_POST]->(p) " +
                     "OPTIONAL MATCH (v)-[t:TAGGED_IN]->(p) " +

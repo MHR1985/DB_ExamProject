@@ -120,9 +120,9 @@ public class ChatClient {
         try (Jedis jedis = jedisPool.getResource()) {
             long listSize = jedis.llen(historyKey);
             if (listSize >= 109) {
-                jedis.lpop(historyKey);
+                jedis.rpop(historyKey);
             }
-            jedis.rpush(historyKey,message);
+            jedis.lpush(historyKey,message);
 
         }
     }
