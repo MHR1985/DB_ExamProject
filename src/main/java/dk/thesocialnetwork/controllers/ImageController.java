@@ -41,7 +41,7 @@ public class ImageController {
     public File getUserImage(String username) {
         User user = userRepository.findUserWithUsername(username);
         if (user == null || user.getCurrentImg() == null)
-            return new File("thesocialnetwork/src/main/resources/images/anonym.jpg");
+            return new File("src/main/resources/images/anonym.jpg");
         Image activeImage = user.getCurrentImg();
         File img = new File(activeImage.getUrl());
         return img;
