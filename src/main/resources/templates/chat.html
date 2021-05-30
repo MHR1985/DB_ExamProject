@@ -37,7 +37,13 @@
     }
 
     let name = document.getElementById("nameInput").value;
-    document.getElementById("messageInput").value = getSavedValue("messageInput@" + name);    // set the value to this input
+    let savedChatText = getSavedValue("messageInput@" + name);
+    document.getElementById("messageInput").value = savedChatText;
+    if(savedChatText.length>0){
+        $("#messageInput").focus();
+    }
+    // set the value to this input
+
     /* Here you can add more inputs to set value. if it's saved */
 
     //Save the value function - save it to localStorage as (ID, VALUE)
