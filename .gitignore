@@ -21,7 +21,6 @@ postgres-data
 *.ipr
 .idea
 postgres-data
-images
 
 ### NetBeans ###
 /nbproject/private/
