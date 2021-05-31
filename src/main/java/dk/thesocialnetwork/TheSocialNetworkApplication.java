@@ -17,7 +17,7 @@ public class TheSocialNetworkApplication {
 
     public static void main(String[] args) throws InterruptedException {
         SpringApplication.run(TheSocialNetworkApplication.class, args);
-//        ChatApplication.run();
+        RedisChatExample.CreateChats();
 
     }
 
