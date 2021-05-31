@@ -32,9 +32,9 @@ public class AccountController {
     }
 
     @GetMapping("")
-    public String getProfileView(Model model){
+    public String getProfileView(Model model) {
         String username = HelperUtil.getUsernameFromLoggedIn();
-        if(username == null || username.equals("anonymousUser"))
+        if (username == null || username.equals("anonymousUser"))
             return "redirect:/login";
         User user = userRepository.findUserWithUsername(username);
         model.addAttribute("images", user.getImages());
@@ -43,7 +43,7 @@ public class AccountController {
     }
 
     @PostMapping("/picture")
-    public String changeProfilePicture(@RequestParam("imageTitle") String imageTitle){
+    public String changeProfilePicture(@RequestParam("imageTitle") String imageTitle) {
         String username = HelperUtil.getUsernameFromLoggedIn();
         User user = userRepository.findUserWithUsername(username);
         Image image = imageRepository.findImageWithUsername(username, imageTitle);
@@ -54,19 +54,21 @@ public class AccountController {
         return "redirect:";
     }
 
-    @PostMapping(path="", consumes={"multipart/form-data"})
+    @PostMapping(path = "", consumes = {"multipart/form-data"})
     public ResponseEntity uploadImg(@RequestParam("filename") MultipartFile multipart, @RequestParam("imgTitle") String imgTitle) throws IOException {
-        if(!multipart.getContentType().equals("image/jpeg") && !multipart.getContentType().equals("image/png") && !multipart.getContentType().equals("image/gif"))
+        if (!multipart.getContentType().equals("image/jpeg") && !multipart.getContentType().equals("image/png") && !multipart.getContentType().equals("image/gif"))
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         String username = HelperUtil.getUsernameFromLoggedIn();
-        Image previousImage = imageRepository.findImageWithUsername(username,imgTitle);
+        Image previousImage = imageRepository.findImageWithUsername(username, imgTitle);
         if (previousImage != null)
             return new ResponseEntity(HttpStatus.CONFLICT);
         File directory = new File("images/");
+        if (!directory.exists())
+            directory.mkdir();
 
         String filename = multipart.getOriginalFilename();
         // Needs some way to make sure filename will be unique.
-        int fileCount=directory.list().length+1;
+        int fileCount = directory.list().length + 1;
         String path = "images/" + fileCount + "_" + filename;
 
         path = path.replace("\\", "/");
@@ -80,8 +82,8 @@ public class AccountController {
             String serverPath = System.getProperty("user.dir") + "\\" + path;
             serverPath = serverPath.replace("\\", "/");
             multipart.transferTo(new File(serverPath));
-            return new ResponseEntity( HttpStatus.OK);
-        }catch (Exception ex) {
+            return new ResponseEntity(HttpStatus.OK);
+        } catch (Exception ex) {
             ex.printStackTrace();
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
         }

@@ -50,6 +50,12 @@ public class User {
         this.active = true;
     }
 
+    public User(String username) {
+        this.username = username;
+    }
+
+
+
 
     public User() {
 

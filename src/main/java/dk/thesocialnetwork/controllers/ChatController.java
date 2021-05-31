@@ -29,7 +29,6 @@ public class ChatController {
         ChatClientHandler handler = new ChatClientHandler();
         List<String> notifications = new ArrayList<>();
         notifications.addAll(handler.getNotifications(name));
-//        notifications = removeDuplicates(notifications);
         model.addAttribute("name", name);
         model.addAttribute("notifications", notifications);
         return "notifications";
