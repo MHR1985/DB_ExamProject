@@ -1,14 +1,14 @@
 package dk.thesocialnetwork.model;
 
-import org.neo4j.ogm.annotation.NodeEntity;
 import org.springframework.data.neo4j.core.schema.Id;
+import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
 
 import java.util.ArrayList;
 import java.util.List;
 import static org.springframework.data.neo4j.core.schema.Relationship.Direction.INCOMING;
 
-@NodeEntity
+@Node
 public class Person {
 
 

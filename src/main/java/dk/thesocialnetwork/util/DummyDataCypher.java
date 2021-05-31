@@ -1,11 +1,15 @@
 package dk.thesocialnetwork.util;
 
 import dk.thesocialnetwork.dto.FollowsDTO;
+import dk.thesocialnetwork.model.Person;
+import dk.thesocialnetwork.model.Post;
 import dk.thesocialnetwork.repository.PersonRepository;
 import dk.thesocialnetwork.repository.PostRepository;
 import org.neo4j.driver.Driver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
 
 @Component
 public class DummyDataCypher {
@@ -46,15 +50,34 @@ public class DummyDataCypher {
 
     private static void createDummyPosts() {
         PostRepository postRepository = new PostRepository(driverStatic);
-        postRepository.createPost("hej @frederik og @martin", "kenneth");
-        postRepository.createPost("@martin har købt den sejeste bil", "kenneth");
+
+        String post1 = postRepository.createPost("hej @frederik og @martin", "kenneth");
+        ArrayList<String> taggedPeople = new ArrayList<>();
+        taggedPeople.add("frederik");
+        taggedPeople.add("martin");
+        postRepository.addTaggedPeople(post1,taggedPeople);
+        String post2 = postRepository.createPost("@martin har købt den sejeste bil", "kenneth");
+        taggedPeople = new ArrayList<>();
+        taggedPeople.add("martin");
+        postRepository.addTaggedPeople(post2,taggedPeople);
         postRepository.createPost("Hej alle sammen", "kenneth");
-        postRepository.createPost("hej @simon og @frederik", "martin");
+        String post3 = postRepository.createPost("hej @simon og @frederik", "martin");
+        taggedPeople = new ArrayList<>();
+        taggedPeople.add("simon");
+        taggedPeople.add("frederik");
+        postRepository.addTaggedPeople(post3,taggedPeople);
         postRepository.createPost("Godt gået", "martin");
-        postRepository.createPost("hej @kenneth og @martin", "simon");
+        String post4 = postRepository.createPost("hej @kenneth og @martin", "simon");
+        taggedPeople = new ArrayList<>();
+        taggedPeople.add("kenneth");
+        taggedPeople.add("martin");
+        postRepository.addTaggedPeople(post4,taggedPeople);
         postRepository.createPost("Det styrer for vildt", "simon");
         postRepository.createPost("Hej med jer!", "frederik");
-        postRepository.createPost("Hej @simon", "frederik");
+        String post5 = postRepository.createPost("Hej @simon", "frederik");
+        taggedPeople = new ArrayList<>();
+        taggedPeople.add("simon");
+        postRepository.addTaggedPeople(post5,taggedPeople);
     }
 
     @Autowired

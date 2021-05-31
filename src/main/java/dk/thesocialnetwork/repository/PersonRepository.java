@@ -53,11 +53,9 @@ public class PersonRepository  {
                     "RETURN p");
             recordStream = result.stream().collect(Collectors.toList());
             for (Record rec: recordStream) {
-                // rec.get(m) BECAUSE WE WE RETURN M IN CYPHER THIS IS THE RECORD'S NAME. MUST GET IT FIRST.
-                //System.out.println(rec.get("m").get("handleName"));
+
                 String handleName = rec.get("p").get("handleName").toString();
                 following.add(handleName.substring(1, handleName.length()-1));
-                //System.out.println(rec.get("properties").get("handleName").toString());
             }
 
             return following;
