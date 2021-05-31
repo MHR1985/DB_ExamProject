@@ -14,20 +14,23 @@ public class RedisChatExample {
         ChatClient client2 = handler.createClient(names[1],names[0]);
         ChatClient client3 = handler.createClient(names[2],names[3]);
         ChatClient client4 = handler.createClient(names[3],names[2]);
-        client1.sendMessage("Hi there!");
-        client2.sendMessage("Hello back!");
-        client1.sendMessage("How are you?");
-        client2.sendMessage("I am good, how are you?");
-        client1.sendMessage("I am also good, thanks for asking");
-        client2.sendMessage("You are welcome :)");
+        GenerateChat(client1, client2);
+        GenerateChat(client3, client4);
 
+
+    }
+
+    private static void GenerateChat(ChatClient client3, ChatClient client4) {
         client3.sendMessage("Hi there!");
         client4.sendMessage("Hello back!");
         client3.sendMessage("How are you?");
         client4.sendMessage("I am good, how are you?");
         client3.sendMessage("I am also good, thanks for asking");
         client4.sendMessage("You are welcome :)");
-
-
+        client3.sendMessage("Nice weather today");
+        client4.sendMessage("Yes I agree. Very hot!");
+        client3.sendMessage("I think I will go to the beach, want to come?");
+        client4.sendMessage("Yes what a great idea! I would love to!");
+        client3.sendMessage("That is very nice, see you there!");
     }
 }
