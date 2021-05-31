@@ -110,4 +110,25 @@ public class PersonRepository  {
                     "CREATE (n)<-[:FOLLOWED_BY]-(m)");
         }
     }
+
+    public boolean checkIfDataInDatabase() {
+        List<Record> recordStream;
+        List<String> following = new ArrayList<>();
+        boolean dataInDatabase = false;
+        try(Session session = driver.session()){
+            Result result = session.run("MATCH (n) " +
+            "RETURN count(n) > 0 as n");
+            recordStream = result.stream().collect(Collectors.toList());
+            for (Record rec: recordStream) {
+                String databaseEmpty = rec.get("n").toString();
+                dataInDatabase = Boolean.parseBoolean(databaseEmpty);
+                return dataInDatabase;
+
+            }
+        }catch (Exception ex) {
+            ex.printStackTrace();
+            return false;
+        }
+        return dataInDatabase;
+    }
 }

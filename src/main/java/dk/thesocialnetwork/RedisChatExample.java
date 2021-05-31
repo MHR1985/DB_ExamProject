@@ -8,19 +8,19 @@ public class RedisChatExample {
     private static String[] names = new String[]{"martin", "kenneth", "simon","frederik"};
 
 
-    public static void CreateChats(){
+    public static void createChats(){
         ChatClientHandler handler = new ChatClientHandler();
         ChatClient client1 = handler.createClient(names[0],names[1]);
         ChatClient client2 = handler.createClient(names[1],names[0]);
         ChatClient client3 = handler.createClient(names[2],names[3]);
         ChatClient client4 = handler.createClient(names[3],names[2]);
-        GenerateChat(client1, client2);
-        GenerateChat(client3, client4);
+        generateChat(client1, client2);
+        generateChat(client3, client4);
 
 
     }
 
-    private static void GenerateChat(ChatClient client3, ChatClient client4) {
+    private static void generateChat(ChatClient client3, ChatClient client4) {
         client3.sendMessage("Hi there!");
         client4.sendMessage("Hello back!");
         client3.sendMessage("How are you?");
