@@ -32,7 +32,7 @@ services:
     hostname: core1
     image: neo4j:4.2.5-enterprise
     networks:
-      -lan
+      - lan
     ports:
       - 7474:7474
       - 6477:6477
@@ -50,7 +50,7 @@ services:
     hostname: core2
     image: neo4j:4.2.5-enterprise
     networks:
-        -lan
+        - lan
     ports:
       - 7475:7475
       - 6478:6478
@@ -69,7 +69,7 @@ services:
     hostname: core3
     image: neo4j:4.2.5-enterprise
     networks:
-      -lan
+      - lan
     ports:
       - 7476:7476
       - 6479:6479
@@ -88,7 +88,7 @@ services:
   readreplica1:
     image: neo4j:4.2.5-enterprise
     networks:
-      -lan
+      - lan
     ports:
       - 7477:7477
       - 6480:6480
