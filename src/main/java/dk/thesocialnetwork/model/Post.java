@@ -14,15 +14,17 @@ public class Post {
     @GeneratedValue
     private Long id;
 
-    public String text;
+    private String text;
 
     @Relationship(type = "LIKED")
     private List<Person> likes;
 
     @Relationship(type = "TAGGED_IN")
-    public List<Person> taggedPeople;
+    private List<Person> taggedPeople;
 
-    public LocalDateTime timeStamp;
+    private LocalDateTime timeStamp;
+
+    private Person author;
 
     public Post(){
 
@@ -34,6 +36,14 @@ public class Post {
         this.likes = likes;
         this.taggedPeople = taggedPeople;
         this.timeStamp = timeStamp;
+    }
+
+    public Post(Long id, String text, List<Person> taggedPeople, LocalDateTime timeStamp, Person author) {
+        this.id = id;
+        this.text = text;
+        this.taggedPeople = taggedPeople;
+        this.timeStamp = timeStamp;
+        this.author = author;
     }
 
     public Long getId() {
@@ -75,4 +85,8 @@ public class Post {
     public void setTimeStamp(LocalDateTime timeStamp) {
         this.timeStamp = timeStamp;
     }
+
+    public Person getAuthor() { return author; }
+
+    public void setAuthor(Person author) { this.author = author; }
 }

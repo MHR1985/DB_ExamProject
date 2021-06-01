@@ -33,12 +33,12 @@
                      aria-labelledby="follower-tab">
                     <div th:each="post : ${followerPosts}" class="followerPosts">
                         <div><br>POST:</br></div>
-                        <div th:text="${post.author}"></div>
+                        <div th:text="${post.author.handleName}"></div>
                         <div th:text="${post.text}"></div>
                         <div th:if="${!post.taggedPeople.empty}">
                             <b>Tagged People:</b>
                             <ul th:each="taggedPerson : ${post.taggedPeople}">
-                                <li th:text="${taggedPerson}"></li>
+                                <li th:text="${taggedPerson.handleName}"></li>
                             </ul>
                         </div>
                         <div th:text="${post.timeStamp}"></div>
@@ -47,12 +47,12 @@
                 <div class="tab-pane fade" id="userPosts" role="tabpanel" aria-labelledby="user-tab">
                     <div th:each="post : ${userPosts}">
                         <div><br>POST:</br></div>
-                        <div th:text="${post.author}"></div>
+                        <div th:text="${post.author.handleName}"></div>
                         <div th:text="${post.text}"></div>
                         <div th:if="${!post.taggedPeople.empty}">
                             <b>Tagged People:</b>
                             <ul th:each="taggedPerson : ${post.taggedPeople}">
-                                <li th:text="${taggedPerson}"></li>
+                                <li th:text="${taggedPerson.handleName}"></li>
                             </ul>
                         </div>
                         <div th:text="${post.timeStamp}"></div>

@@ -2,7 +2,7 @@ package dk.thesocialnetwork.controllers;
 
 import dk.thesocialnetwork.dto.CreatePostDTO;
 import dk.thesocialnetwork.dto.LikedPostDTO;
-import dk.thesocialnetwork.dto.PostDTO;
+import dk.thesocialnetwork.model.Post;
 import dk.thesocialnetwork.repository.PostRepository;
 import dk.thesocialnetwork.util.HelperUtil;
 import org.neo4j.driver.Driver;
@@ -35,8 +35,8 @@ public class PostController {
     @GetMapping("")
     public String getNewsFeed(Model model) {
         String author = HelperUtil.getUsernameFromLoggedIn();
-        List<PostDTO> postsFromFollowes = postRepository.getPostsFromFollowes(author);
-        List<PostDTO> postsFromUser = postRepository.getPostsByUsername(author);
+        List<Post> postsFromFollowes = postRepository.getPostsFromFollowes(author);
+        List<Post> postsFromUser = postRepository.getPostsByUsername(author);
         model.addAttribute("followerPosts", postsFromFollowes);
         model.addAttribute("userPosts",postsFromUser);
         return "newsfeed";

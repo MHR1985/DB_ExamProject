@@ -1,18 +1,11 @@
 package dk.thesocialnetwork.repository;
 
-import dk.thesocialnetwork.dto.PostDTO;
 import dk.thesocialnetwork.model.Person;
 import dk.thesocialnetwork.model.Post;
 import org.neo4j.driver.*;
 import org.neo4j.driver.Record;
-import org.springframework.data.neo4j.repository.Neo4jRepository;
-import org.springframework.data.neo4j.repository.query.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.web.bind.annotation.GetMapping;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -76,9 +69,9 @@ public class PostRepository {
         }
     }
 
-    public List<PostDTO> getPostsFromFollowes(String username) {
+    public List<Post> getPostsFromFollowes(String username) {
         List<Record> recordStream;
-        List<PostDTO> follows = new ArrayList<>();
+        List<Post> follows = new ArrayList<>();
         try (Session session = driver.session()) {
             Result result = session.run("MATCH (n:Person {handleName: '"+username+"'}) " +
                     "MATCH (n)-[r:FOLLOWS]->(m) " +
@@ -89,11 +82,11 @@ public class PostRepository {
             recordStream = result.stream().collect(Collectors.toList());
             for (Record rec : recordStream) {
                 String id = rec.get("post_id").toString();
-                List<String> tags = new ArrayList<>();
+                List<Person> tags = new ArrayList<>();
                 for(Value val: rec.get("v").values()){
                     String taggedPerson = val.get("handleName").toString();
                     taggedPerson = taggedPerson.substring(1, taggedPerson.length() - 1);
-                    tags.add(taggedPerson);
+                    tags.add(new Person(taggedPerson));
                 }
                 String text = rec.get("p").get("text").toString();
                 text = text.substring(1, text.length() - 1);
@@ -101,16 +94,16 @@ public class PostRepository {
                 timestamp = timestamp.substring(1, timestamp.length() - 1);
                 String author = rec.get("m").get("handleName").toString();
                 author  = author.substring(1, author.length() - 1);
-                PostDTO postDto = new PostDTO(id,text,tags,timestamp,author);
-                follows.add(postDto);
+                Post post = new Post(Long.parseLong(id),text,tags, LocalDateTime.parse(timestamp),new Person(author));
+                follows.add(post);
             }
             return follows;
         }
     }
 
-    public List<PostDTO> getPostsByUsername (String username) {
+    public List<Post> getPostsByUsername (String username) {
         List<Record> recordStream;
-        List<PostDTO> follows = new ArrayList<>();
+        List<Post> follows = new ArrayList<>();
         try (Session session = driver.session()) {
             Result result = session.run("MATCH (n:Person {handleName: '"+username+"'}) " +
                     "MATCH (n)-[:CREATED_POST]->(p) " +
@@ -120,11 +113,11 @@ public class PostRepository {
             recordStream = result.stream().collect(Collectors.toList());
             for (Record rec : recordStream) {
                 String id = rec.get("post_id").toString();
-                List<String> tags = new ArrayList<>();
+                List<Person> tags = new ArrayList<>();
                 for(Value val: rec.get("v").values()){
                     String taggedPerson = val.get("handleName").toString();
                     taggedPerson = taggedPerson.substring(1, taggedPerson.length() - 1);
-                    tags.add(taggedPerson);
+                    tags.add(new Person(taggedPerson));
                 }
                 String text = rec.get("p").get("text").toString();
                 text = text.substring(1, text.length() - 1);
@@ -132,8 +125,8 @@ public class PostRepository {
                 timestamp = timestamp.substring(1, timestamp.length() - 1);
                 String author = rec.get("n").get("handleName").toString();
                 author  = author.substring(1, author.length() - 1);
-                PostDTO postDto = new PostDTO(id,text,tags,timestamp,author);
-                follows.add(postDto);
+                Post post = new Post(Long.parseLong(id),text,tags, LocalDateTime.parse(timestamp),new Person(author));
+                follows.add(post);
             }
             return follows;
         }
