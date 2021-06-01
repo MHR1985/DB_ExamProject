@@ -1,4 +1,4 @@
-# About the Project?
+# About the Project
 This project was made for an Exam in Databases.<br>
 The project is a social networks bare bones, with users, posts and followers.<br>
 We use 3 different database types to do that and they are implemented through docker compose.
