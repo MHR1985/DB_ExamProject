@@ -1,5 +1,12 @@
 version: '3.8'
 
+x-health:
+    &health
+    test: wget http://host.docker.internal:7474 -O -
+    interval: 30s
+    timeout: 10s
+    retries: 5
+
 x-shared:
   &common
   NEO4J_AUTH: neo4j/foobar
@@ -14,12 +21,14 @@ x-shared:
   NEO4JLABS_PLUGINS: '["graph-data-science"]'
   NEO4J_dbms_security_procedures_unrestricted: gds.*
   NEO4J_dbms_security_procedures_allowlist: gds.*
+  NEO4j.dbms.default_advertised_address: host.docker.internal
 
 x-shared-core:
   &common-core
   <<: *common
   NEO4J_dbms_mode: CORE
   NEO4J_causal__clustering_minimum__core__cluster__size__at__formation: 3
+
 
 networks:
   lan:
@@ -35,11 +44,19 @@ services:
       - 6477:6477
       - 7687:7687
     container_name: core1
+    healthcheck:
+      <<: *health
     environment:
       <<: *common-core
       NEO4J_causal__clustering_discovery__advertised__address: core1:5000
       NEO4J_causal__clustering_transaction__advertised__address: core1:6000
       NEO4J_causal__clustering_raft__advertised__address: core1:7000
+      NEO4J_dbms_connector_http_listen__address: :7474
+      NEO4J_dbms_connector_https_listen__address: :6477
+      NEO4J_dbms_connector_bolt_listen__address: :7687
+
+
+
 
   core2:
     hostname: core2
@@ -51,6 +68,8 @@ services:
       - 6478:6478
       - 7688:7688
     container_name: core2
+    healthcheck:
+      <<: *health
     environment:
       <<: *common-core
       NEO4J_causal__clustering_discovery__advertised__address: core2:5000
@@ -70,6 +89,8 @@ services:
       - 6479:6479
       - 7689:7689
     container_name: core3
+    healthcheck:
+      <<: *health
     environment:
       <<: *common-core
       NEO4J_causal__clustering_discovery__advertised__address: core3:5000
@@ -88,6 +109,8 @@ services:
       - 7477:7477
       - 6480:6480
       - 7690:7690
+    healthcheck:
+      <<: *health
     environment:
       <<:  *common
       NEO4J_dbms_mode: READ_REPLICA
@@ -118,5 +141,24 @@ services:
       - 5432:5432
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
-      #- ./sql/create_database.sql:/docker-entrypoint-initdb.d/create_database.sql
+
+  thesocialnetwork:
+    image: abenhansen/thesocialnetwork
+    ports:
+      - "8080:8080"
+    networks:
+      - lan
+    depends_on:
+      core1:
+        condition: service_healthy
+      core2:
+        condition: service_healthy
+      core3:
+        condition: service_healthy
+      readreplica1:
+        condition: service_healthy
+
+
+
+
 

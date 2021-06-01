@@ -9,11 +9,13 @@ import java.util.Set;
 
 public class ChatClientHandler {
 
-    private final String host = "localhost";
+    private static final String localhost = "localhost";
+    private static final String docker = "host.docker.internal";
+
     private final int port = 6379;
 
     final JedisPoolConfig poolConfig = buildPoolConfig();
-    JedisPool jedisPool = new JedisPool(poolConfig, "localhost", port, 0, "1234");
+    JedisPool jedisPool = new JedisPool(poolConfig, docker, port, 0, "1234");
 
     private JedisPoolConfig buildPoolConfig() {
         final JedisPoolConfig poolConfig = new JedisPoolConfig();

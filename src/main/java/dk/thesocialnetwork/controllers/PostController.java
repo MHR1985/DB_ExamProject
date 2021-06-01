@@ -30,7 +30,7 @@ public class PostController {
     private final Driver driver;
     private ArrayList<String> taggedPeople;
 
-    public PostController( Driver driver) {
+    public PostController(Driver driver) {
         this.driver = driver;
         postRepository = new PostRepository(driver);
     }
