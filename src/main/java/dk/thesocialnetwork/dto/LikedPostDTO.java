@@ -1,9 +1,7 @@
 package dk.thesocialnetwork.dto;
 
 public class LikedPostDTO {
-
     private String postId;
-
     private String likedPerson;
 
     public LikedPostDTO() {

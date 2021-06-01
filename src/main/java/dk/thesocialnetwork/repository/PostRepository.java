@@ -4,6 +4,7 @@ import dk.thesocialnetwork.dto.PostDTO;
 import dk.thesocialnetwork.model.Person;
 import dk.thesocialnetwork.model.Post;
 import org.neo4j.driver.*;
+import org.neo4j.driver.Record;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.data.repository.query.Param;

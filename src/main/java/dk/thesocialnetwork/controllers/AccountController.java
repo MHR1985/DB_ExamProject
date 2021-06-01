@@ -12,7 +12,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
 
@@ -20,10 +19,7 @@ import java.io.IOException;
 @CrossOrigin
 @RequestMapping("/profile")
 public class AccountController {
-
-
     UserRepository userRepository;
-
     ImageRepository imageRepository;
 
     public AccountController(UserRepository userRepository, ImageRepository imageRepository) {
@@ -67,10 +63,8 @@ public class AccountController {
             directory.mkdir();
 
         String filename = multipart.getOriginalFilename();
-        // Needs some way to make sure filename will be unique.
         int fileCount = directory.list().length + 1;
         String path = "images/" + fileCount + "_" + filename;
-
         path = path.replace("\\", "/");
 
         try {
@@ -88,5 +82,4 @@ public class AccountController {
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
 }

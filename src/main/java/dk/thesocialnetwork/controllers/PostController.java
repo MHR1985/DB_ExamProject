@@ -6,29 +6,21 @@ import dk.thesocialnetwork.dto.PostDTO;
 import dk.thesocialnetwork.repository.PostRepository;
 import dk.thesocialnetwork.util.HelperUtil;
 import org.neo4j.driver.Driver;
-import org.neo4j.driver.Record;
-import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/post")
 @CrossOrigin
 public class PostController {
-
-
     private PostRepository postRepository;
-
     private final Driver driver;
-    private ArrayList<String> taggedPeople;
 
     public PostController(Driver driver) {
         this.driver = driver;
@@ -104,19 +96,4 @@ public class PostController {
             return new ResponseEntity(likedPostDTO, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-    @GetMapping("/{handlename}")
-    public ResponseEntity getAllPostsPerson(@PathVariable String handlename) {
-        List<Record> recordStream;
-        try (Session session = driver.session()) {
-            Result result = session.run("MATCH (n:Person {handleName: 'Amy'})-[:CREATED_POST]->(Post)" +
-                    "RETURN ID(Post), Post.text, Post.timeStamp, n.handleName ");
-            recordStream = result.stream().collect(Collectors.toList());
-
-        }
-        return new ResponseEntity<>(recordStream.toString(), HttpStatus.OK);
-    }
-
-
-
 }

@@ -1,13 +1,7 @@
 package dk.thesocialnetwork.model;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import javax.persistence.*;
-
 import java.util.*;
-import java.util.Collection;
-import java.util.HashSet;
 
 @Entity
 @Table(name = "Account")
@@ -53,9 +47,6 @@ public class User {
     public User(String username) {
         this.username = username;
     }
-
-
-
 
     public User() {
 

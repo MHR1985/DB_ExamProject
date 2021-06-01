@@ -1,24 +1,12 @@
 package dk.thesocialnetwork.dto;
 
-import dk.thesocialnetwork.model.Person;
-import org.springframework.data.neo4j.core.schema.GeneratedValue;
-import org.springframework.data.neo4j.core.schema.Id;
-import org.springframework.data.neo4j.core.schema.Relationship;
-
-import java.time.LocalDateTime;
 import java.util.List;
 
 public class PostDTO {
-
-
     private String id;
-
     private String text;
-
     private List<String> taggedPeople;
-
     private String timeStamp;
-
     private String author;
 
     public PostDTO(String id, String text, List<String> taggedPeople, String timeStamp, String author) {
@@ -43,30 +31,5 @@ public class PostDTO {
 
     public void setText(String text) {
         this.text = text;
-    }
-
-
-    public List<String> getTaggedPeople() {
-        return taggedPeople;
-    }
-
-    public void setTaggedPeople(List<String> taggedPeople) {
-        this.taggedPeople = taggedPeople;
-    }
-
-    public String getTimeStamp() {
-        return timeStamp;
-    }
-
-    public void setTimeStamp(String timeStamp) {
-        this.timeStamp = timeStamp;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
     }
 }

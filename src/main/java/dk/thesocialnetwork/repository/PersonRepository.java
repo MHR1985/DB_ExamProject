@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 //Conert this interface to class, and use that method in LoginController.createUser(). Also create method that gets all users you do not follow and conert to JSON if necessary
-public class PersonRepository  {
+public class  PersonRepository  {
     private final Driver driver;
 
     public PersonRepository(Driver driver) {

@@ -11,12 +11,11 @@ public class Image {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    public Image() {
-    }
-
     public Image(String title, String url) {
         this.title = title;
         this.url = url;
+    }
+    public Image() {
     }
 
     public String getTitle() {

@@ -7,7 +7,6 @@ public class RedisChatExample {
 
     private static String[] names = new String[]{"martin", "kenneth", "simon","frederik"};
 
-
     public static void createChats(){
         ChatClientHandler handler = new ChatClientHandler();
         ChatClient client1 = handler.createClient(names[0],names[1]);

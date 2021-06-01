@@ -21,7 +21,6 @@ import java.nio.file.Files;
 @RequestMapping("/image")
 @CrossOrigin
 public class ImageController {
-
     @Autowired
     UserRepository userRepository;
 

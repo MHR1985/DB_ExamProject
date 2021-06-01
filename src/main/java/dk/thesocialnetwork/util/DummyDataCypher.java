@@ -1,8 +1,6 @@
 package dk.thesocialnetwork.util;
 
 import dk.thesocialnetwork.dto.FollowsDTO;
-import dk.thesocialnetwork.model.Person;
-import dk.thesocialnetwork.model.Post;
 import dk.thesocialnetwork.repository.PersonRepository;
 import dk.thesocialnetwork.repository.PostRepository;
 import org.neo4j.driver.Driver;

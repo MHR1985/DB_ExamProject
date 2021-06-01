@@ -5,9 +5,6 @@ public class PaginationDTO {
     String name;
     String target;
 
-    public PaginationDTO() {
-    }
-
     public PaginationDTO(int index, String name, String target) {
         this.index = index;
         this.name = name;
@@ -16,10 +13,6 @@ public class PaginationDTO {
 
     public int getIndex() {
         return index;
-    }
-
-    public void setIndex(int index) {
-        this.index = index;
     }
 
     public String getName() {

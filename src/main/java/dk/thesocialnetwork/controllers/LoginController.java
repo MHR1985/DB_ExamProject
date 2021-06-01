@@ -14,31 +14,25 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.File;
 import java.io.IOException;
 
 @Controller
 @RequestMapping("/login")
 @CrossOrigin
 public class LoginController {
-
     @Autowired
     UserRepository userRepository;
 
-    private PersonRepository personRepository;
+    @Autowired
+    private PasswordEncoder encoder;
 
+    private PersonRepository personRepository;
     private final Driver driver;
 
     public LoginController(Driver driver) {
         this.driver = driver;
         this.personRepository = new PersonRepository(driver);
     }
-
-
-
-    @Autowired
-    private PasswordEncoder encoder;
 
     @PostMapping("/createuser")
     @Transactional
@@ -47,11 +41,8 @@ public class LoginController {
         AjaxDTO ajaxDTO = new AjaxDTO();
         if (userRepository.findUserWithUsername(username) == null && personRepository.getHandleName(username) == null) {
             try(Session session = driver.session()) {
-                //Maybe use JDBC Templates?
                 userRepository.save(new User(username, encoder.encode(user.getPassword())));
-                //Create User in Neo4j
                 personRepository.createPerson(username);
-                //personRepository.save(new Person(username));
                 ajaxDTO.setSuccess("User created you can now login");
                 return new ResponseEntity<>(ajaxDTO, HttpStatus.OK);
             } catch (Exception e) {
@@ -67,10 +58,8 @@ public class LoginController {
         }
     }
 
-
     @GetMapping("")
     public String getLoginPage() throws IOException {
         return "login";
     }
-
 }
