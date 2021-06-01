@@ -33,8 +33,8 @@ social media platform:
 You can now access the program by typing in localhost:8080 in a browser.
 
 # Authors
-Simon Schønberg Bojesen
-Martin Høigaard Cupello
-Kenneth Leo Hansen
+Simon Schønberg Bojesen<br>
+Martin Høigaard Cupello<br>
+Kenneth Leo Hansen<br>
 Frederik Blem
 
