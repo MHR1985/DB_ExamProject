@@ -10,7 +10,7 @@
 * User can unfollow another user					- Implemented
 * User can make a post with tagged users			- Implemented
 * User can upload a profile picture					- Implemented
-* <strike>User can see who follows him/her<\strike>	- Dropped due to time constraints
+* <strike>User can see who follows him/her</strike>	- Dropped due to time constraints
 * User can change among his old profile pictures	- Implemented
 
 # Nonfunctional requirements
