@@ -16,4 +16,8 @@ public class FollowsDTO {
     public void setTarget(String target) {
         this.target = target;
     }
+
+    public String getFollower() { return follower; }
+
+    public void setFollower(String follower) { this.follower = follower; }
 }

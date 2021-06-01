@@ -32,4 +32,28 @@ public class PostDTO {
     public void setText(String text) {
         this.text = text;
     }
+
+    public List<String> getTaggedPeople() {
+        return taggedPeople;
+    }
+
+    public void setTaggedPeople(List<String> taggedPeople) {
+        this.taggedPeople = taggedPeople;
+    }
+
+    public String getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(String timeStamp) {
+        this.timeStamp = timeStamp;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
 }
